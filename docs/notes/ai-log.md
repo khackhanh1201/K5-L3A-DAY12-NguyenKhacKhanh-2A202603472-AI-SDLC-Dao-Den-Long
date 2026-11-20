@@ -33,3 +33,15 @@ Công cụ: Claude Code (desktop app), model Claude Opus 5.5.
 **Token / chi phí ước tính Phase 2:** _(điền từ trang usage)_
 
 **Cách tiết kiệm token:** chỉ đọc 2 skill ngoài đầy đủ, còn lại grep ý chính; lưu ticket thành file; test viết trước nên 51/53 đạt ngay lần chạy đầu, chỉ sửa 2 lỗi thật.
+
+## Phase 3
+
+| Bước | Việc giao cho AI | Ghi chú / lỗi AI và cách phát hiện |
+|---|---|---|
+| Spec | Lưu Ticket-03; viết ADR-001 (mô hình trạng thái đèn + luật thắng), CHANGELOG breaking changes, giả định C1–C9 | Chọn lưu dầu bằng số nguyên 1/60 theo khuyến nghị của ticket |
+| Core | Dầu đèn, châm dầu, thắp lại, drain, luật thắng bình minh, sức chứa, điểm mới | Chạy test cũ trước: đúng 5 test đỏ, khớp các luật bị thay. Sửa/xóa kèm comment lý do |
+| Test | 16 scenario mới trong tests/phase3.test.js | 6 test đỏ ở lần chạy đầu. 5 là lỗi viết test: đọc snapshot ở tick không được ghi, cửa sổ thời gian quá ngắn. 1 là giá trị mong đợi tính thiếu: bóng drain từ scenario hút ngay ở bước 0 (49.9 chứ không phải 50). Đã xem lại luật trước khi sửa giá trị mong đợi; code không đổi |
+| Phát hiện từ spec | "Đèn đầy (used = 0) không được chọn" gần như không xảy ra, vì dầu bị trừ ở bước 2 trước bước tương tác, nên đèn luôn thiếu ≥ 1/60 và tốn 1 đom đóm. Giữ đúng công thức của ticket, ghi thành test riêng | |
+| UI | Thanh dầu, nhấp nháy 1 Hz, HUD sức chứa và số đèn cần giữ, chế độ mù màu | Kiểm tra bằng ảnh 1280×720 |
+
+**Token / chi phí ước tính Phase 3:** _(điền từ trang usage)_ · Tiết kiệm: sửa bằng script thay chuỗi thay vì viết lại file, chỉ chạy lại test liên quan khi debug.
