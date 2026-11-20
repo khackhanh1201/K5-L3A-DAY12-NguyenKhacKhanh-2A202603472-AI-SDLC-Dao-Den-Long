@@ -1,134 +1,134 @@
-# commit 9818fc1 · node v20.14.0 · win32 x64 · 2026-11-20T08:13:31.616Z
+# commit 6779893 · node v20.14.0 · win32 x64 · 2026-11-20T08:20:48.757Z
 TAP version 13
 # Subtest: format: snapshot tick 0 trước input, mỗi 10 tick, dòng cuối là end
 ok 1 - format: snapshot tick 0 trước input, mỗi 10 tick, dòng cuối là end
   ---
-  duration_ms: 65.7233
+  duration_ms: 79.6548
   ...
 # Subtest: màn mặc định: 5 đèn L1..L5, L1 tại (0,0,25), giá trị đầu từ tuning
 ok 2 - màn mặc định: 5 đèn L1..L5, L1 tại (0,0,25), giá trị đầu từ tuning
   ---
-  duration_ms: 55.6987
+  duration_ms: 60.6203
   ...
 # Subtest: di chuyển: move [0,1] trong 60 tick đi đúng player_speed mét theo +Z
 ok 3 - di chuyển: move [0,1] trong 60 tick đi đúng player_speed mét theo +Z
   ---
-  duration_ms: 64.4631
+  duration_ms: 60.753
   ...
 # Subtest: di chuyển: cam_yaw_deg 90 biến move [0,1] thành +X
 ok 4 - di chuyển: cam_yaw_deg 90 biến move [0,1] thành +X
   ---
-  duration_ms: 91.3452
+  duration_ms: 61.6885
   ...
 # Subtest: di chuyển: vector [1,1] được chuẩn hóa về độ dài 1
 ok 5 - di chuyển: vector [1,1] được chuẩn hóa về độ dài 1
   ---
-  duration_ms: 74.1067
+  duration_ms: 63.2121
   ...
 # Subtest: nhặt đom đóm: mote ở (0,0,5) được nhặt khi khoảng cách ≤ pickup_radius
 ok 6 - nhặt đom đóm: mote ở (0,0,5) được nhặt khi khoảng cách ≤ pickup_radius
   ---
-  duration_ms: 55.9131
+  duration_ms: 61.1894
   ...
 # Subtest: sức chứa: đang mang carry_capacity thì không nhặt thêm
 ok 7 - sức chứa: đang mang carry_capacity thì không nhặt thêm
   ---
-  duration_ms: 54.9068
+  duration_ms: 58.7561
   ...
 # Subtest: nạp đèn: đủ lantern_cost thì deposit + lantern_lit, cộng per_lantern
 ok 8 - nạp đèn: đủ lantern_cost thì deposit + lantern_lit, cộng per_lantern
   ---
-  duration_ms: 58.2015
+  duration_ms: 59.6734
   ...
 # Subtest: nạp đèn: mang ít hơn cost thì nạp một phần, chưa thắp
 ok 9 - nạp đèn: mang ít hơn cost thì nạp một phần, chưa thắp
   ---
-  duration_ms: 56.7203
+  duration_ms: 64.3249
   ...
 # Subtest: nạp đèn: ngoài interact_radius thì không có gì
 ok 10 - nạp đèn: ngoài interact_radius thì không có gì
   ---
-  duration_ms: 56.7183
+  duration_ms: 76.0268
   ...
 # Subtest: nút chỉ kích hoạt ở cạnh false→true (giữ interact không nạp lặp)
 ok 11 - nút chỉ kích hoạt ở cạnh false→true (giữ interact không nạp lặp)
   ---
-  duration_ms: 65.7994
+  duration_ms: 115.4549
   ...
 # Subtest: tỏa sáng: stun Bóng Mực trong pulse_radius, đẩy pulse_push_m, tốn pulse_cost
 ok 12 - tỏa sáng: stun Bóng Mực trong pulse_radius, đẩy pulse_push_m, tốn pulse_cost
   ---
-  duration_ms: 68.0843
+  duration_ms: 125.1591
   ...
 # Subtest: tỏa sáng: không đủ ánh sáng thì không có pulse
 ok 13 - tỏa sáng: không đủ ánh sáng thì không có pulse
   ---
-  duration_ms: 60.3338
+  duration_ms: 96.8419
   ...
 # Subtest: tỏa sáng: tôn trọng pulse_cooldown_s
 ok 14 - tỏa sáng: tôn trọng pulse_cooldown_s
   ---
-  duration_ms: 59.3472
+  duration_ms: 154.6673
   ...
 # Subtest: bị chạm: mất 1 flame, rơi floor(carried*hit_drop_ratio), bất tử invuln_s
 ok 15 - bị chạm: mất 1 flame, rơi floor(carried*hit_drop_ratio), bất tử invuln_s
   ---
-  duration_ms: 57.3101
+  duration_ms: 114.7992
   ...
 # Subtest: thua: hết flame -> game_over lost/no_flames, dừng ngay
 ok 16 - thua: hết flame -> game_over lost/no_flames, dừng ngay
   ---
-  duration_ms: 53.3649
+  duration_ms: 82.5148
   ...
 # Subtest: thua: hết giờ -> lost/dawn đúng tick time_left_s*60
 ok 17 - thua: hết giờ -> lost/dawn đúng tick time_left_s*60
   ---
-  duration_ms: 54.9585
+  duration_ms: 87.1259
   ...
 # Subtest: thắng: thắp đèn cuối -> won/all_lit, cộng thưởng giây và flame còn lại
 ok 18 - thắng: thắp đèn cuối -> won/all_lit, cộng thưởng giây và flame còn lại
   ---
-  duration_ms: 57.2452
+  duration_ms: 81.5713
   ...
 # Subtest: dựng scenario không cộng điểm: đèn đặt sẵn lit không tính per_lantern
 ok 19 - dựng scenario không cộng điểm: đèn đặt sẵn lit không tính per_lantern
   ---
-  duration_ms: 61.4083
+  duration_ms: 78.0353
   ...
 # Subtest: vùng an toàn: Bóng Mực không vào safe_radius của đèn đã thắp
 ok 20 - vùng an toàn: Bóng Mực không vào safe_radius của đèn đã thắp
   ---
-  duration_ms: 62.8231
+  duration_ms: 76.0453
   ...
 # Subtest: input sai định dạng -> mã thoát 2
 ok 21 - input sai định dạng -> mã thoát 2
   ---
-  duration_ms: 162.5937
+  duration_ms: 241.1888
   ...
 # Subtest: tất định: cùng seed + input cho output giống hệt, kể cả id tự sinh
 ok 22 - tất định: cùng seed + input cho output giống hệt, kể cả id tự sinh
   ---
-  duration_ms: 276.5832
+  duration_ms: 362.448
   ...
 # Subtest: worldMove theo công thức contract
 ok 23 - worldMove theo công thức contract
   ---
-  duration_ms: 1.8783
+  duration_ms: 4.1788
   ...
 # Subtest: rng tất định theo seed
 ok 24 - rng tất định theo seed
   ---
-  duration_ms: 1.129
+  duration_ms: 5.1444
   ...
 # Subtest: input reader: trường vắng mặt giữ giá trị cũ
 ok 25 - input reader: trường vắng mặt giữ giá trị cũ
   ---
-  duration_ms: 0.2944
+  duration_ms: 0.3686
   ...
 # Subtest: validateInputs bắt tick không tăng
 ok 26 - validateInputs bắt tick không tăng
   ---
-  duration_ms: 0.4838
+  duration_ms: 2.0339
   ...
 1..26
 # tests 26
@@ -138,4 +138,4 @@ ok 26 - validateInputs bắt tick không tăng
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 1781.9005
+# duration_ms 2386.7447
