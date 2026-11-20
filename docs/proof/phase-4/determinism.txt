@@ -1,4 +1,4 @@
-# commit e87c616 · node v20.14.0 · win32 x64 · 12th Gen Intel(R) Core(TM) i7-12700H · 2026-11-20T15:14:13.961Z
+# commit 15d5dae · node v20.14.0 · win32 x64 · 12th Gen Intel(R) Core(TM) i7-12700H · 2026-11-20T15:15:31.465Z
 lệnh: node src/headless.js --seed 42 --night N --inputs out/verify/inputs.json --ticks 3000 --out <f>
 Đêm 1: 6c9620a58f33591899fb9c70512a752446101afcb7901999457de5e6d49296e2 / 6c9620a58f33591899fb9c70512a752446101afcb7901999457de5e6d49296e2 → GIỐNG HỆT
 Đêm 2: 33f44fc8f4ab88fe036acb41e1a398469cdbff0d5adf4664c252d31989bfe054 / 33f44fc8f4ab88fe036acb41e1a398469cdbff0d5adf4664c252d31989bfe054 → GIỐNG HỆT
