@@ -2,7 +2,7 @@
 import * as THREE from 'three';
 import { RULES, NIGHTS } from '../core/level.js';
 import { shadeState } from '../core/game.js';
-import { createSky, createCloudSea, createMist, decorateIsland, glowSprite } from './decor.js';
+import { createSky, createCloudSea, createMist, decorateIsland, glowSprite, glowTexture } from './decor.js';
 
 // Bảng màu chuẩn Ticket-02
 export const PAL = {
@@ -24,6 +24,7 @@ export function createWorld(renderer) {
   createSky(scene, PAL);
   const cloudSea = createCloudSea(scene);
   const mist = createMist(scene);
+  let benchMode = false; // Ticket-04: cảnh bench tắt phần trang trí/hiệu ứng sáng tạo thêm
   const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 400);
   const ambient = new THREE.AmbientLight(0xb8c4ff, 0.15);
   const hemi = new THREE.HemisphereLight(0x6f80c8, 0x1b2350, 0.6);
@@ -110,6 +111,34 @@ export function createWorld(renderer) {
   scene.add(leaves);
 
   const pools = { motes: new Map(), shades: new Map(), lanterns: new Map(), drifters: new Map(), charms: new Map() };
+
+  // --- Instancing cho thực thể số lượng lớn (skill performance-optimization: cắt draw call) ---
+  const MAX_SH = 256, MAX_MO = 200;
+  const dummy = new THREE.Object3D();
+  const tmpM = new THREE.Matrix4();
+  const EYE = [new THREE.Matrix4().makeTranslation(-0.24, 0.15, 0.62), new THREE.Matrix4().makeTranslation(0.24, 0.15, 0.62)];
+  const cBody = new THREE.Color(PAL.shadeBody), cStun = new THREE.Color(PAL.shadeStun);
+  const cMote = new THREE.Color(PAL.moteCore), cDrop = new THREE.Color(PAL.moteHalo);
+  const rimColor = new THREE.Color(PAL.shadeRim);
+  const inst = (geom, material, n) => {
+    const m = new THREE.InstancedMesh(geom, material, n);
+    m.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+    m.frustumCulled = false; // bounding sphere của geometry gốc không bao các instance
+    m.count = 0;
+    scene.add(m);
+    return m;
+  };
+  const shBody = inst(geo.shade, new THREE.MeshLambertMaterial({ color: 0xffffff, emissive: 0x05020a }), MAX_SH);
+  const shRim = inst(geo.shadeRim, new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.BackSide }), MAX_SH);
+  const shEye = inst(geo.eye, new THREE.MeshBasicMaterial({ color: 0xd9c2ff }), MAX_SH * 2);
+  const shAura = inst(new THREE.PlaneGeometry(3.2, 3.2).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({
+    map: glowTexture(), color: 0x6a34c8, transparent: true, opacity: 0.4, depthWrite: false, blending: THREE.AdditiveBlending,
+  }), MAX_SH);
+  const moCore = inst(geo.mote, new THREE.MeshBasicMaterial({ color: 0xffffff }), MAX_MO);
+  const moHaloMat = new THREE.MeshBasicMaterial({ map: glowTexture(), color: PAL.moteHalo, transparent: true, opacity: 0.85, depthWrite: false, blending: THREE.AdditiveBlending });
+  const moHalo = inst(new THREE.PlaneGeometry(1.3, 1.3), moHaloMat, MAX_MO);
+  for (let i = 0; i < MAX_SH; i++) { shBody.setColorAt(i, cBody); shRim.setColorAt(i, rimColor); }
+  for (let i = 0; i < MAX_MO; i++) moCore.setColorAt(i, cMote);
   let fx = { pulse: 0, hitFlash: 0 };
 
   function clearLevel() {
@@ -188,7 +217,7 @@ export function createWorld(renderer) {
       level.add(tower, roof, bell);
     }
     map.pads.forEach(pad);
-    decorateIsland(level, map, PAL);
+    if (!benchMode) decorateIsland(level, map, PAL);
   }
 
   function makeLantern() {
@@ -288,15 +317,24 @@ export function createWorld(renderer) {
     camera.position.set(p.pos[0] - fx_ * 9, cy + 6, p.pos[2] - fz * 9);
     camera.lookAt(p.pos[0], cy + 1.2, p.pos[2]);
 
-    syncPool(pools.motes, g.motes, (m) => {
-      const grp = new THREE.Group();
-      grp.add(new THREE.Mesh(geo.mote, m.kind === 'dropped' ? mats.drop : mats.mote), glowSprite(PAL.moteHalo, 1.3, 0.85));
-      return grp;
-    }, (obj, m) => {
+    // Đom đóm: InstancedMesh (lõi + quầng quay về camera) → 2 draw call cho mọi số lượng
+    let mn = 0;
+    for (const m of g.motes) {
+      if (mn >= MAX_MO) break;
+      if (!(m.ttl === null || m.ttl > 90 || Math.floor(t * 8) % 2 === 0)) continue; // sắp hết hạn thì nhấp nháy
       const ph = parseInt(m.id.slice(1), 10);
-      obj.position.set(m.pos[0], m.pos[1] + 0.8 + Math.sin(t * 2 + ph) * 0.2, m.pos[2]);
-      obj.visible = m.ttl === null || m.ttl > 90 || Math.floor(t * 8) % 2 === 0;
-    });
+      dummy.position.set(m.pos[0], m.pos[1] + 0.8 + Math.sin(t * 2 + ph) * 0.2, m.pos[2]);
+      dummy.quaternion.copy(camera.quaternion);
+      dummy.scale.setScalar(1);
+      dummy.updateMatrix();
+      moCore.setMatrixAt(mn, dummy.matrix);
+      moHalo.setMatrixAt(mn, dummy.matrix);
+      moCore.setColorAt(mn, m.kind === 'dropped' ? cDrop : cMote);
+      mn++;
+    }
+    moCore.count = moHalo.count = mn;
+    moCore.instanceMatrix.needsUpdate = moHalo.instanceMatrix.needsUpdate = true;
+    if (moCore.instanceColor) moCore.instanceColor.needsUpdate = true;
 
     orbit.forEach((m, i) => {
       m.visible = !p.waiting && i < p.carried;
@@ -304,17 +342,38 @@ export function createWorld(renderer) {
       m.position.set(p.pos[0] + Math.cos(a) * 1.1, p.pos[1] + 1.3 + Math.sin(t * 3 + i) * 0.2, p.pos[2] + Math.sin(a) * 1.1);
     });
 
-    syncPool(pools.shades, g.shades, makeShade, (obj, s) => {
+    // Bóng Mực: InstancedMesh cho thân, viền, mắt, hào quang → 4 draw call cho mọi số lượng
+    let sn = 0;
+    for (const s of g.shades) {
+      if (sn >= MAX_SH) break;
       const st = shadeState(s);
       const rise = st === 'spawning' ? 1 - s.spawnT / RULES.shadeSpawningTicks : 1;
-      obj.position.set(s.pos[0], s.pos[1] - (1 - rise) * 1.5 + Math.sin(t * 3 + s.pos[0]) * 0.08, s.pos[2]);
-      obj.scale.setScalar(0.4 + 0.6 * rise);
-      obj.lookAt(p.pos[0], obj.position.y, p.pos[2]);
+      const y = s.pos[1] - (1 - rise) * 1.5 + Math.sin(t * 3 + s.pos[0]) * 0.08;
+      dummy.position.set(s.pos[0], y, s.pos[2]);
+      dummy.scale.setScalar(0.4 + 0.6 * rise);
+      dummy.quaternion.identity();
+      dummy.lookAt(p.pos[0], y, p.pos[2]);
+      dummy.updateMatrix();
+      shBody.setMatrixAt(sn, dummy.matrix);
+      shRim.setMatrixAt(sn, dummy.matrix);
       const stun = st === 'stunned';
-      obj.userData.body.material = stun ? mats.stun : mats.shade;
-      obj.userData.rim.material = stun ? mats.stunRim : mats.rim;
-      obj.userData.aura.material.opacity = stun ? 0.1 : 0.3 + 0.1 * Math.sin(t * 4);
-    });
+      shBody.setColorAt(sn, stun ? cStun : cBody);
+      shRim.setColorAt(sn, stun ? cStun : rimColor);
+      for (let k = 0; k < 2; k++) shEye.setMatrixAt(sn * 2 + k, tmpM.multiplyMatrices(dummy.matrix, EYE[k]));
+      dummy.position.set(s.pos[0], s.pos[1] - 0.95, s.pos[2]);
+      dummy.quaternion.identity();
+      dummy.scale.setScalar(stun ? 0.6 : 1);
+      dummy.updateMatrix();
+      shAura.setMatrixAt(sn, dummy.matrix);
+      sn++;
+    }
+    shBody.count = shRim.count = shAura.count = sn;
+    shEye.count = sn * 2;
+    for (const im of [shBody, shRim, shEye, shAura]) im.instanceMatrix.needsUpdate = true;
+    if (shBody.instanceColor) shBody.instanceColor.needsUpdate = true;
+    if (shRim.instanceColor) shRim.instanceColor.needsUpdate = true;
+    shAura.material.opacity = 0.35 + 0.1 * Math.sin(t * 4);
+    shAura.visible = !benchMode;
 
     syncPool(pools.drifters, g.drifters.filter((d) => d.state !== 'removed'), makeDrifter, (m, d) => {
       m.position.set(d.pos[0], d.pos[1], d.pos[2]);
@@ -351,6 +410,7 @@ export function createWorld(renderer) {
       v.lampMat.emissive.setRGB(1.0 * v.fill, 0.5 * v.fill, 0.12 * v.fill);
       v.core.visible = l.lit;
       v.light.intensity = 45 * v.fill + 80 * v.flash;
+      v.light.visible = v.light.intensity > 0.5; // đèn tắt không tốn chi phí chiếu sáng
       v.halo.material.opacity = Math.min(1, 0.85 * v.fill + v.flash);
       v.halo.scale.setScalar(7 + 4 * v.flash);
       v.ring.material.opacity = l.lit ? 0.35 : 0;
@@ -359,7 +419,7 @@ export function createWorld(renderer) {
 
     // ánh sáng môi trường = 0.15 + 0.55 × tiến độ (Ticket-02)
     const k = lit / g.lanterns.length;
-    cloudSea.update(t);
+    if (!benchMode) cloudSea.update(t);
     mist.update(t, p.pos, k);
     ambient.intensity = 0.15 + 0.55 * k;
     hemi.intensity = 0.6 + 0.35 * k;
@@ -391,10 +451,12 @@ export function createWorld(renderer) {
   return {
     scene, camera, buildLevel, sync, pools,
     pulse: () => (fx.pulse = 1),
+    setBenchMode: (on) => { benchMode = on; cloudSea.mesh.visible = !on; mist.grp.visible = !on; orbit.forEach((m) => (m.visible = false)); },
     setColorblind: (on) => {
       const c = on ? PAL.shadeRimCB : PAL.shadeRim;
       mats.rim.color.set(c);
-      mats.eye.color.set(on ? PAL.shadeRimCB : 0xd9c2ff);
+      rimColor.set(c);
+      shEye.material.color.set(on ? PAL.shadeRimCB : 0xd9c2ff);
     },
     flashLantern: (id) => { const v = pools.lanterns.get(id); if (v) v.flash = 1; },
     resize: (w, h) => { camera.aspect = w / h; camera.updateProjectionMatrix(); renderer.setSize(w, h); },
