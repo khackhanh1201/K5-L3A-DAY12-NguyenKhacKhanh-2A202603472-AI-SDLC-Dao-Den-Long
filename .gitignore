@@ -4,3 +4,11 @@ out/
 *.log
 .env
 .env.*
+
+# Skill ngoài (gamedev-skills/awesome-gamedev-agent-skills, Apache-2.0): chỉ dùng local, không commit
+.claude/skills/game-ai/
+.claude/skills/game-ui-ux/
+.claude/skills/audio-design/
+.claude/skills/performance-optimization/
+.claude/skills/threejs-scene-setup/
+.claude/skills/threejs-materials-lighting/
