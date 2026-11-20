@@ -32,7 +32,7 @@ export function worldMove(move, camYawDeg) {
   return [x * c + z * s, -x * s + z * c];
 }
 
-export function createGame(tuning, { seed = 0, night = 1, scenario = null } = {}) {
+export function createGame(tuning, { seed = 0, night = 1, scenario = null, bench = false } = {}) {
   const map = NIGHTS[night];
   if (!map) throw new Error(`night không hợp lệ: ${night}`);
   const sc = scenario || {};
@@ -41,6 +41,8 @@ export function createGame(tuning, { seed = 0, night = 1, scenario = null } = {}
     T,
     map,
     night,
+    seed,
+    bench, // cảnh benchmark Ticket-04: tắt sinh thêm, sát thương, nhặt, hao dầu, kết thúc Đêm
     rng: createRng(seed),
     tick: 0,
     sim: 0,
@@ -358,9 +360,9 @@ export function step(g, input) {
   } else if (g.wind.active && --g.wind.t <= 0) g.wind.active = false;
   // Dầu đèn (Ticket-03): hao 1/60 mỗi tick + 5/60 cho mỗi Bóng Mực đang drain; hết dầu thì tắt ngay sau bước 2
   const decayU = Math.round(T.fuel_decay_per_s), drainU = Math.round(T.drain_per_s);
-  for (const l of g.lanterns) if (l.lit) l.fuelU -= decayU;
+  if (!g.bench) for (const l of g.lanterns) if (l.lit) l.fuelU -= decayU;
   for (const s of g.shades) {
-    if (s.mode !== 'drain' || s.stun > 0 || s.evictT > 0) continue;
+    if (g.bench || s.mode !== 'drain' || s.stun > 0 || s.evictT > 0) continue;
     const l = g.lanterns.find((x) => x.id === s.target);
     if (!l || !l.lit) continue;
     l.fuelU -= drainU;
@@ -401,7 +403,7 @@ export function step(g, input) {
   }
 
   // 4. Nhặt đom đóm và bùa
-  if (!p.waiting) {
+  if (!p.waiting && !g.bench) {
     const keep = [];
     for (const m of g.motes) {
       if (p.carried < capacity(g) && distXZ(p.pos, m.pos) <= T.pickup_radius + EPS && Math.abs(p.pos[1] - m.pos[1]) <= R.pickupDy + EPS) {
@@ -525,7 +527,7 @@ export function step(g, input) {
       s.recoilT--;
       continue;
     }
-    const d = p.waiting ? Infinity : distXZ(s.pos, p.pos);
+    const d = p.waiting || g.bench ? Infinity : distXZ(s.pos, p.pos); // bench: luôn wander
     if (s.mode === 'drain') {
       // Từ drain: chase nếu Mây ≤ 6 m; wander nếu đèn tắt, fuel ≥ 30, hoặc cách > 2 m
       const l = g.lanterns.find((x) => x.id === s.target);
@@ -578,7 +580,7 @@ export function step(g, input) {
   for (const d of g.drifters) moveDrifter(g, d);
 
   // 9. Chạm: Gió Lạc cướp trước, rồi Bóng Mực
-  if (!p.waiting) {
+  if (!p.waiting && !g.bench) {
     for (const d of [...g.drifters].sort((a, b) => idNum(a.id) - idNum(b.id))) {
       if (d.state !== 'chase' || p.carried <= 0) continue;
       if (distXZ(d.pos, p.pos) > R.drifterTouch + EPS) continue;
@@ -614,12 +616,13 @@ export function step(g, input) {
   }
 
   // 10. Sinh theo lịch (sim tick)
-  spawnScheduled(g, ev);
+  if (!g.bench) spawnScheduled(g, ev);
 
   // 11. Thắng / thua
   // Ticket-03: không thắng sớm; bình minh cần ≥ ceil(win_ratio × n) đèn đang sáng
   let over = null;
-  if (p.flames <= 0) over = ['lost', 'no_flames'];
+  if (g.bench) over = null;
+  else if (p.flames <= 0) over = ['lost', 'no_flames'];
   else if (timeLeft(g) <= EPS) {
     const litNow = g.lanterns.filter((l) => l.lit).length;
     over = litNow >= litNeeded(g) ? ['won', 'dawn_survived'] : ['lost', 'dawn'];
