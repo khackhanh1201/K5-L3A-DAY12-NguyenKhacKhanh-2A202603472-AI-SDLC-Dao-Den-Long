@@ -1,5 +1,19 @@
 # Changelog
 
+## [phase-4] / v1.0.0 — Contract v1.3 "Bình minh: phát hành"
+
+### Thêm
+- **Benchmark** `node scripts/bench.mjs --seed 42 --duration 30 --out bench.json`: cửa sổ Chrome/Edge 1280×720, tắt vsync, cảnh chuẩn (200 Bóng Mực, 100 đom đóm, L1–L3 đầy dầu), camera bay vòng, ghi avg/p1 low/p95/frames/load/peak mem.
+- **Soak test** `node --expose-gc scripts/soak.mjs --seed 7 --nights 10 --out soak.json`: 10 Đêm xoay vòng trong 1 tiến trình, input ngẫu nhiên theo seed.
+- **Bảng xếp hạng cục bộ**: top 10, lưu trên đĩa qua server `scripts/run.mjs` (dự phòng localStorage), màn hình từ menu, nhập tên sau Bình Minh/khi thua (hỗ trợ tiếng Việt), lệnh `--export-leaderboard`.
+- **Dễ tiếp cận**: đổi phím cho 9 hành động (báo trùng, khôi phục mặc định), phụ đề + mũi tên Bóng Mực, giảm chuyển động, chữ ≥ 18 px và chế độ chữ lớn ×1.25.
+- Retro, bằng chứng Phase 4, `bench.json`, `soak.json`.
+
+### Thay đổi (không phá vỡ luật headless)
+- `game.contract.json` v1.3: thêm `bench_cmd`, `soak_cmd`; `run_cmd` đổi từ `npm run start` (vite preview) thành `node scripts/run.mjs` (server tĩnh + API bảng xếp hạng). `npm start` vẫn chạy được.
+- Hiệu năng render: Bóng Mực và đom đóm dùng InstancedMesh (1197 → 49 draw call trong cảnh bench), point light của đèn tắt bị ẩn.
+- Core thêm cờ `bench` (chỉ dùng cho cảnh bench); output headless v1.0–v1.2 không đổi (69 test cũ vẫn đạt).
+
 ## [phase-3] Contract v1.2 — "Đèn cạn dầu"
 
 ### Breaking changes

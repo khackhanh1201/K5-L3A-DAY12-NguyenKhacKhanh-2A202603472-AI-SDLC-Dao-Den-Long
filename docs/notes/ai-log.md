@@ -46,3 +46,18 @@ Công cụ: Claude Code (desktop app), model Claude Opus 5.5.
 
 **Token / chi phí ước tính Phase 3:** _(điền từ trang usage)_ · Tiết kiệm: sửa bằng script thay chuỗi thay vì viết lại file, chỉ chạy lại test liên quan khi debug.
 | UI (làm đẹp) | Bầu trời, biển mây, sương, cây cỏ, quầng sáng, HUD kính mờ (`src/render/decor.js`) | Lỗi 1: quầng đèn gần như vô hình sau tone mapping ACES, phát hiện qua ảnh chụp và sửa bằng màu > 1.0. Lỗi 2: số đo FPS theo rAF tụt còn khoảng 20 vì cửa sổ mất focus. A/B bật/tắt trang trí cho kết quả như nhau, nên chuyển sang đo thời gian render có ép GPU đồng bộ (10.3 ms) |
+
+
+## Phase 4
+
+| Bước | Việc giao cho AI | Ghi chú / lỗi AI và cách phát hiện |
+|---|---|---|
+| Spec | Lưu Ticket-04, contract v1.3, giả định D1–D8 | |
+| Bench | Cảnh bench trong core (cờ `bench`), chế độ `?bench=1`, `scripts/bench.mjs` (playwright-core + Chrome/Edge) | Bản đầu 50.7 FPS vì 1197 draw call → InstancedMesh (skill performance-optimization) → 87.8. Lần chạy dài 57.9/p1 4.7 do game trong pane dev chạy song song → tắt rồi đo lại. Đo bước mô phỏng (0.1 ms) loại trừ CPU → ẩn point light cường độ 0 → 90.1/31.8. Các lần sau dao động mạnh (45–84 FPS) theo trạng thái máy; ghi mọi lần đo vào bench-runs.md |
+| Lỗi nghiêm trọng của AI | Cập nhật tài liệu bằng chuỗi lệnh bash chứa backtick | Bash coi backtick là lệnh con nên đã chạy ngoài ý muốn `npm run bench` (ghi đè bench.json) và `node scripts/run.mjs` (treo). Phát hiện qua lỗi "command not found" và lệnh không kết thúc. Đã dừng tác vụ, kiểm tra không còn tiến trình sót, chạy lại bench chủ động, thêm quy tắc vào AGENTS.md |
+| Soak | `scripts/soak.mjs` | mem ×1.48 lúc đầu; đo heap mỗi Đêm thấy ổn định nên không phải rò rỉ; thêm khởi động JIT (×1.08) và ghi cả hai số |
+| Bảng xếp hạng | `leaderboard.js` + server `run.mjs` + UI | Bash heredoc nuốt dấu gạch chéo ngược trong regex chặn path traversal; test lệnh xuất đỏ nên phát hiện được |
+| Accessibility | Đổi phím, phụ đề, mũi tên Bóng Mực, giảm chuyển động, chữ ≥ 18 px | Kiểm tra bằng getComputedStyle (chữ nhỏ nhất 18 px) và ảnh chụp; sửa màn cài đặt bị tràn mất tiêu đề |
+| Docs | README, CHANGELOG, retro, bằng chứng | |
+
+**Token / chi phí ước tính Phase 4:** _(điền từ trang usage)_

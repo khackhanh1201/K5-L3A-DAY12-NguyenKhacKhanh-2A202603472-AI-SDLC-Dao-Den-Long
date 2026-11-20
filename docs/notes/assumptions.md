@@ -126,3 +126,19 @@ Quyết định thiết kế: [ADR-001](../adr/ADR-001-lantern-fuel-and-dawn-win
 | C7 | Khóa điểm trong tuning | `per_mote` 5, `per_lantern` 100, `per_relight` 40, `per_stun` 5, `per_stun_drain` 15, `per_lantern_at_dawn` 50, `per_second_left` 0, `per_flame_left` 50 | A6, B14 |
 | C8 | Kiểm tra bình minh | Khi `time_left ≤ 0` (dung sai 1e-6) sau bước 10. Đếm đèn đang sáng sau khi trừ dầu và tắt đèn của tick đó | A8 |
 | C9 | Sức chứa khi đang mang nhiều hơn | Sức chứa không giảm nên không xảy ra | |
+
+
+---
+
+## Phase 4 (Ticket-04, Contract v1.3)
+
+| # | Chỗ mơ hồ | Giả định |
+|---|---|---|
+| D1 | "Tắt vsync nếu engine cho phép" với bản web | Chạy trong Chrome/Edge với `--disable-gpu-vsync --disable-frame-rate-limit`, nên `vsync_off: true` |
+| D2 | "Hiệu ứng sáng tạo phải tắt" trong bench | Tắt cây cỏ/đá/cây, biển mây, sương, hào quang Bóng Mực, đom đóm bay quanh Mây. Giữ đảo, đèn + ánh sáng, bầu trời, quầng sáng đèn/đom đóm |
+| D3 | "Bóng Mực vẫn wander bình thường" | Trong bench, Bóng Mực luôn ở mode wander (không chase/drain), di chuyển theo luật wander C1 |
+| D4 | `peak_mem_mb` bản web | Tổng RSS (Windows: WorkingSet) của cả cây tiến trình trình duyệt, lấy mẫu thưa |
+| D5 | `load_ms` | Từ lúc tiến trình `node scripts/bench.mjs` bắt đầu (Date.now() − process.uptime()) tới khung hình đầu tiên của cảnh bench |
+| D6 | "Lưu trên đĩa cục bộ" với bản web | `node scripts/run.mjs` (run_cmd) phục vụ game + API ghi `~/.dao-den-long/leaderboard.json` (ghi file tạm rồi đổi tên). Bản tĩnh không có server thì dùng localStorage |
+| D7 | seed trong mục bảng xếp hạng | Seed của Đêm cuối cùng vừa chơi |
+| D8 | Soak "tải xong Đêm đầu" | Bao gồm bước khởi động JIT (chạy nháp 3 Đêm ngắn); có cờ `--no-warmup` và số đo không khởi động trong bằng chứng |
