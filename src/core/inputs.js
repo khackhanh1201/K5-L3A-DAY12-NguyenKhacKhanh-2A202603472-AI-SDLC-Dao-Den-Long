@@ -1,8 +1,8 @@
-// Đọc và kiểm tra file inputs / scenario theo Test Contract v1.0 (mục C, D).
+// Đọc và kiểm tra file inputs / scenario theo Test Contract v1.1 (v1.0 mục C, D + phần thêm của Ticket-02).
 // Sai định dạng -> ném FormatError (CLI thoát mã 2).
 export class FormatError extends Error {}
 
-const BUTTONS = ['jump', 'interact', 'pulse', 'dash'];
+const BUTTONS = ['jump', 'interact', 'pulse', 'dash', 'pause'];
 
 function isNum(v) {
   return typeof v === 'number' && Number.isFinite(v);
@@ -38,7 +38,7 @@ export function validateInputs(obj) {
 /** Trả về hàm inputAt(k): trạng thái input đang có hiệu lực ở tick k (k tăng dần). */
 export function createInputReader(inputs) {
   const frames = inputs ? inputs.frames : [];
-  const cur = { move: [0, 0], cam_yaw_deg: 0, jump: false, interact: false, pulse: false, dash: false };
+  const cur = { move: [0, 0], cam_yaw_deg: 0, jump: false, interact: false, pulse: false, dash: false, pause: false };
   let idx = 0;
   return function inputAt(k) {
     while (idx < frames.length && frames[idx].tick <= k) {
@@ -64,13 +64,29 @@ export function validateScenario(s) {
     if (k in s && typeof s[k] !== 'boolean') throw new FormatError(`scenario: ${k} phải là boolean`);
   }
   if ('motes' in s) {
-    if (!Array.isArray(s.motes) || !s.motes.every(isVec3)) throw new FormatError('scenario: motes phải là mảng [x,y,z]');
+    if (!Array.isArray(s.motes) || !s.motes.every((m) => isVec3(m) || (m && typeof m === 'object' && isVec3(m.pos)))) {
+      throw new FormatError('scenario: motes phải là mảng [x,y,z] hoặc {pos}');
+    }
+  }
+  for (const k of ['drifters', 'charms']) {
+    if (k in s && (!Array.isArray(s[k]) || !s[k].every((e) => e && typeof e === 'object' && isVec3(e.pos)))) {
+      throw new FormatError(`scenario: ${k} phải là mảng object có pos [x,y,z]`);
+    }
+  }
+  if ('random_drifters' in s && typeof s.random_drifters !== 'boolean') throw new FormatError('scenario: random_drifters phải là boolean');
+  if ('wind_enabled' in s && typeof s.wind_enabled !== 'boolean') throw new FormatError('scenario: wind_enabled phải là boolean');
+  if (s.player) {
+    for (const k of ['invuln_ticks', 'dash_cd_ticks', 'pulse_cd_ticks', 'charm_ticks']) {
+      if (k in s.player && !(Number.isInteger(s.player[k]) && s.player[k] >= 0)) throw new FormatError(`scenario: player.${k} phải là số nguyên ≥ 0`);
+    }
   }
   if ('shades' in s) {
     if (!Array.isArray(s.shades)) throw new FormatError('scenario: shades phải là mảng');
     s.shades.forEach((sh, i) => {
       if (!sh || typeof sh !== 'object' || !isVec3(sh.pos)) throw new FormatError(`scenario: shades[${i}].pos không hợp lệ`);
       if ('id' in sh && typeof sh.id !== 'string') throw new FormatError(`scenario: shades[${i}].id phải là chuỗi`);
+      if ('state' in sh && !['spawning', 'wander', 'chase', 'recoil', 'stunned'].includes(sh.state)) throw new FormatError(`scenario: shades[${i}].state không hợp lệ`);
+      if ('state_ticks_left' in sh && !(Number.isInteger(sh.state_ticks_left) && sh.state_ticks_left >= 0)) throw new FormatError(`scenario: shades[${i}].state_ticks_left không hợp lệ`);
     });
   }
   if ('lanterns' in s) {

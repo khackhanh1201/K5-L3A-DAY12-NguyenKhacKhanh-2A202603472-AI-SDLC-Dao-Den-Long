@@ -8,15 +8,18 @@ export const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 export const contract = JSON.parse(readFileSync(join(root, 'game.contract.json'), 'utf8'));
 export const T = contract.tuning;
 
-/** Scenario "sạch": không sinh ngẫu nhiên, không Bóng Mực, không đom đóm. */
+/** Scenario "sạch": không sinh ngẫu nhiên, không gió, không thực thể. */
 export function clean(extra = {}) {
-  return { random_motes: false, random_shades: false, motes: [], shades: [], ...extra };
+  return {
+    random_motes: false, random_shades: false, random_drifters: false, wind_enabled: false,
+    motes: [], shades: [], drifters: [], charms: [], ...extra,
+  };
 }
 
-export function runHeadless(name, { scenario, inputs, rawInputs, ticks = 60, seed = 1, every = 10 } = {}) {
+export function runHeadless(name, { scenario, inputs, rawInputs, ticks = 60, seed = 1, every = 10, night = 1 } = {}) {
   const dir = join(root, 'out', 'scenarios', name);
   mkdirSync(dir, { recursive: true });
-  const args = ['src/headless.js', '--seed', String(seed), '--night', '1', '--ticks', String(ticks), '--snapshot-every', String(every)];
+  const args = ['src/headless.js', '--seed', String(seed), '--night', String(night), '--ticks', String(ticks), '--snapshot-every', String(every)];
   if (scenario) {
     writeFileSync(join(dir, 'scenario.json'), JSON.stringify(scenario, null, 2));
     args.push('--scenario', join(dir, 'scenario.json'));
@@ -27,14 +30,15 @@ export function runHeadless(name, { scenario, inputs, rawInputs, ticks = 60, see
   }
   const outFile = join(dir, 'out.jsonl');
   args.push('--out', outFile);
+  const t0 = performance.now();
   const r = spawnSync(process.execPath, args, { cwd: root, encoding: 'utf8' });
-  let lines = [];
+  const ms = performance.now() - t0;
   if (r.status === 0) {
     const text = readFileSync(outFile, 'utf8');
-    lines = text.trim().split('\n').map((l) => JSON.parse(l));
-    return { code: r.status, stderr: r.stderr, text, lines, ...index(lines) };
+    const lines = text.trim().split('\n').map((l) => JSON.parse(l));
+    return { code: r.status, stderr: r.stderr, text, lines, ms, ...index(lines) };
   }
-  return { code: r.status, stderr: r.stderr, lines };
+  return { code: r.status, stderr: r.stderr, lines: [], ms };
 }
 
 function index(lines) {

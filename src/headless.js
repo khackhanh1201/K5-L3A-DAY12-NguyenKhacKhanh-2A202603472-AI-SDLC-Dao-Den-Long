@@ -36,7 +36,7 @@ function parseArgs(argv) {
     }
   }
   if (!Number.isInteger(a.seed)) fail('--seed phải là số nguyên');
-  if (a.night !== 1) fail('--night chỉ hỗ trợ 1 ở Phase 1');
+  if (![1, 2, 3].includes(a.night)) fail('--night phải là 1, 2 hoặc 3');
   if (!Number.isInteger(a.ticks) || a.ticks < 0) fail('--ticks phải là số nguyên ≥ 0');
   if (!a.out) fail('thiếu --out');
   if (!Number.isInteger(a.snapshotEvery) || a.snapshotEvery < 1) fail('--snapshot-every phải là số nguyên ≥ 1');
@@ -62,22 +62,23 @@ export function run(args) {
   const scenario = args.scenario ? validateScenario(readJson(args.scenario, 'scenario')) : null;
   const inputs = args.inputs ? validateInputs(readJson(args.inputs, 'inputs')) : null;
 
-  const g = createGame(contract.tuning, { seed: args.seed, scenario });
+  const g = createGame(contract.tuning, { seed: args.seed, night: args.night, scenario });
   const inputAt = createInputReader(inputs);
   const lines = [];
   const emitSnap = () => lines.push(JSON.stringify(snapshot(g)));
 
   emitSnap(); // tick 0: sau khi dựng scenario, trước input
+  lines.push(JSON.stringify({ type: 'event', tick: 0, name: 'night_start', data: { night: args.night } })); // B15
   let lastSnap = 0;
   for (let k = 0; k < args.ticks && g.state === 'playing'; k++) {
     for (const ev of step(g, inputAt(k))) lines.push(JSON.stringify(ev));
-    if (g.steps % args.snapshotEvery === 0) {
+    if (g.tick % args.snapshotEvery === 0) {
       emitSnap();
-      lastSnap = g.steps;
+      lastSnap = g.tick;
     }
   }
-  if (lastSnap !== g.steps) emitSnap(); // snapshot cuối tại tick dừng (giả định A7)
-  lines.push(JSON.stringify({ type: 'end', ticks: g.steps, state: g.state, score: g.score }));
+  if (lastSnap !== g.tick) emitSnap(); // snapshot cuối tại tick dừng (giả định A7)
+  lines.push(JSON.stringify({ type: 'end', ticks: g.tick, state: g.state, score: g.score }));
   writeFileSync(args.out, lines.join('\n') + '\n');
 }
 
