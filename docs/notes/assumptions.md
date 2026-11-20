@@ -108,3 +108,21 @@ Theo đúng 12 bước của Ticket-02. Cách đếm bộ đếm: giá trị N �
 | P2-H | **HUD:** lửa trên trái; đồng hồ trên giữa (đỏ, nhấp nháy ≤ 30 s); đèn k/n + điểm trên phải; 10 ô đom đóm dưới giữa; hồi chiêu Lướt/Tỏa Sáng dưới phải; nhắc "E — Nạp ánh sáng (x/10)"; mũi tên tới đèn chưa sáng gần nhất khi nó ở ngoài màn hình | ảnh |
 | P2-K | Bảng màu chuẩn + ánh sáng môi trường 0.15 + 0.55 × tiến độ | so hằng số trong code |
 | P2-T | Headless một Đêm đầy đủ 21.600 tick ≤ 30 s; ≥ 30 FPS trung bình ở 1280×720 | `perf`, đo FPS |
+
+---
+
+## Phase 3 (Ticket-03, Contract v1.2)
+
+Quyết định thiết kế: [ADR-001](../adr/ADR-001-lantern-fuel-and-dawn-win.md). Breaking changes: [CHANGELOG.md](../../CHANGELOG.md).
+
+| # | Chỗ mơ hồ | Giả định | Thay cho |
+|---|---|---|---|
+| C1 | Tốc độ Bóng Mực wander khi đi tới đèn | Tới **đèn yếu** (fuel < 30): đi với `shade_speed` (4.0/4.5). Tới đèn tắt: đi chậm 1.5 m/s; tới nơi (≤ 2 m) thì trôi ngẫu nhiên quanh đó. Không còn đèn tắt nào thì trôi ngẫu nhiên như B8 | B8 |
+| C2 | Lúc nào chuyển sang `drain` | Ở bước 8. Lượng hút được trừ từ bước 2 của tick sau | |
+| C3 | `fuel_drain` | Mỗi Bóng Mực, cứ đủ 60 tick hút (60, 120, …) thì ghi một event với fuel sau khi trừ | |
+| C4 | Sự kiện khi nạp | Đèn chưa sáng: `deposit`; đèn đang sáng: `refuel` (không có `deposit`) | |
+| C5 | Đẩy ra khi châm dầu | Chỉ khi châm làm fuel đi từ < 30 lên ≥ 30. Bóng trong 6 m (kể cả đang drain) bị đẩy ra mép trong 30 tick (`recoil`, không gây hit), sau đó `wander` | |
+| C6 | Đèn sáng có `deposited` | Giữ bằng cost lúc thắp; về 0 khi tắt | |
+| C7 | Khóa điểm trong tuning | `per_mote` 5, `per_lantern` 100, `per_relight` 40, `per_stun` 5, `per_stun_drain` 15, `per_lantern_at_dawn` 50, `per_second_left` 0, `per_flame_left` 50 | A6, B14 |
+| C8 | Kiểm tra bình minh | Khi `time_left ≤ 0` (dung sai 1e-6) sau bước 10. Đếm đèn đang sáng sau khi trừ dầu và tắt đèn của tick đó | A8 |
+| C9 | Sức chứa khi đang mang nhiều hơn | Sức chứa không giảm nên không xảy ra | |
