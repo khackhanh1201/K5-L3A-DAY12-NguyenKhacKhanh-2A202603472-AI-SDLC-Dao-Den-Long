@@ -1,0 +1,5 @@
+# commit 9818fc1 · node v20.14.0 · win32 x64 · 2026-11-20T08:13:31.616Z
+lệnh: node src/headless.js --seed 42 --night 1 --inputs out/verify/inputs.json --ticks 3000 --out <f>
+lần 1 sha256: ab0a595805ee3f6b20d50fbbfa6b95555e266eebc15ec821382f897dd3de3ba4
+lần 2 sha256: ab0a595805ee3f6b20d50fbbfa6b95555e266eebc15ec821382f897dd3de3ba4
+kết quả: GIỐNG HỆT

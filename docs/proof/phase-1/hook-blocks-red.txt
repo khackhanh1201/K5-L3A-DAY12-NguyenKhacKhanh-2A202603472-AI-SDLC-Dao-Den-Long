@@ -1,0 +1,4 @@
+Test đang ĐỎ, chưa được kết thúc. Sửa code (không sửa giá trị mong đợi) rồi chạy lại npm test.
+not ok 27 - co y do
+hook exit=2
+hook exit=0 (sau khi xoa test do)

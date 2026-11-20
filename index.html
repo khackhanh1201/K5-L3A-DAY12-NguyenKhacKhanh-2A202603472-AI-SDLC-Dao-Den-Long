@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Đảo Đèn Lồng</title>
+  <style>
+    html, body { margin: 0; height: 100%; overflow: hidden; background: #0b0614; font-family: system-ui, sans-serif; color: #fde7c2; }
+    #hud { position: fixed; top: 12px; left: 12px; display: flex; gap: 10px; flex-wrap: wrap; pointer-events: none; }
+    .chip { background: rgba(20, 10, 35, .72); border: 1px solid rgba(255, 190, 110, .35); border-radius: 10px; padding: 6px 12px; font-size: 15px; }
+    .chip b { color: #ffc46b; }
+    #help { position: fixed; bottom: 12px; left: 12px; font-size: 13px; opacity: .75; pointer-events: none; }
+    #overlay { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; flex-direction: column; background: rgba(8, 4, 16, .7); text-align: center; }
+    #overlay h1 { font-size: 44px; margin: 0 0 8px; color: #ffc46b; }
+    #overlay p { font-size: 18px; margin: 4px; }
+    #overlay button { margin-top: 18px; font-size: 18px; padding: 10px 26px; border-radius: 12px; border: 0; background: #ffb347; color: #2a1405; cursor: pointer; }
+    #intro { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; flex-direction: column; background: rgba(8, 4, 16, .82); text-align: center; padding: 16px; }
+    #intro h1 { color: #ffc46b; font-size: 42px; margin: 0; }
+    #intro p { max-width: 560px; line-height: 1.5; }
+  </style>
+</head>
+<body>
+  <div id="hud">
+    <div class="chip">Lửa: <b id="h-flames"></b></div>
+    <div class="chip">Đom đóm: <b id="h-carried"></b></div>
+    <div class="chip">Đèn: <b id="h-lit"></b></div>
+    <div class="chip">Bình minh sau: <b id="h-time"></b></div>
+    <div class="chip">Điểm: <b id="h-score"></b></div>
+    <div class="chip">Tỏa sáng: <b id="h-pulse"></b></div>
+  </div>
+  <div id="help">WASD: đi · Kéo chuột / ← →: xoay camera · Space: nhảy · E: nạp đèn · F: tỏa sáng · R: chơi lại</div>
+  <div id="intro">
+    <h1>Đảo Đèn Lồng</h1>
+    <p>Đêm 1 – Đảo Bến. Sương đen đã nuốt ánh sáng của đảo. Hãy giúp Mây gom đom đóm, mang về thắp lại 5 Đèn Lồng Lớn trước bình minh, và tránh xa Bóng Mực.</p>
+    <button id="start" style="font-size:18px;padding:10px 26px;border-radius:12px;border:0;background:#ffb347;color:#2a1405;cursor:pointer">Bắt đầu</button>
+  </div>
+  <div id="overlay">
+    <h1 id="o-title"></h1>
+    <p id="o-reason"></p>
+    <p>Điểm: <b id="o-score"></b></p>
+    <button id="again">Chơi lại (R)</button>
+  </div>
+  <script type="module" src="/src/render/main.js"></script>
+</body>
+</html>
