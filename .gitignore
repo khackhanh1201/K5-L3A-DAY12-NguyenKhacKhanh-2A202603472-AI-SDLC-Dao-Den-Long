@@ -12,3 +12,5 @@ out/
 .claude/skills/performance-optimization/
 .claude/skills/threejs-scene-setup/
 .claude/skills/threejs-materials-lighting/
+
+release/
