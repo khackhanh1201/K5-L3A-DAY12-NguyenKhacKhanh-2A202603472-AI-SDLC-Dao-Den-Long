@@ -1,349 +1,349 @@
-# commit af611db · node v20.14.0 · win32 x64 · 12th Gen Intel(R) Core(TM) i7-12700H · 2026-11-20T09:18:53.900Z
+# commit 9d634d8 · node v20.14.0 · win32 x64 · 12th Gen Intel(R) Core(TM) i7-12700H · 2026-11-20T09:28:47.890Z
 TAP version 13
 # Subtest: format v1.1: snapshot tick 0, night_start, trường mới, dòng cuối end
 ok 1 - format v1.1: snapshot tick 0, night_start, trường mới, dòng cuối end
   ---
-  duration_ms: 253.0338
+  duration_ms: 153.0418
   ...
 # Subtest: tuning khớp số chuẩn (Ticket-02, cập nhật Ticket-03)
 ok 2 - tuning khớp số chuẩn (Ticket-02, cập nhật Ticket-03)
   ---
-  duration_ms: 0.3196
+  duration_ms: 0.4462
   ...
 # Subtest: Đêm 1 mặc định: đèn chuẩn, 20 đom đóm tại 20 điểm khác nhau trên r=12/33
 ok 3 - Đêm 1 mặc định: đèn chuẩn, 20 đom đóm tại 20 điểm khác nhau trên r=12/33
   ---
-  duration_ms: 171.1007
+  duration_ms: 110.6443
   ...
 # Subtest: Đêm 2 và 3 mặc định: đèn, bùa, thời gian, điểm xuất phát
 ok 4 - Đêm 2 và 3 mặc định: đèn, bùa, thời gian, điểm xuất phát
   ---
-  duration_ms: 363.818
+  duration_ms: 231.5682
   ...
 # Subtest: lịch sinh: Bóng Mực 2 con ở tick 300 rồi mỗi 480 (Đêm 1), spawning, cách người chơi ≥ 15 m; đom đóm +1 mỗi 240
 ok 5 - lịch sinh: Bóng Mực 2 con ở tick 300 rồi mỗi 480 (Đêm 1), spawning, cách người chơi ≥ 15 m; đom đóm +1 mỗi 240
   ---
-  duration_ms: 297.917
+  duration_ms: 141.3368
   ...
 # Subtest: di chuyển: 6 m/s, yaw 90 → +X, vector chéo chuẩn hóa
 ok 6 - di chuyển: 6 m/s, yaw 90 → +X, vector chéo chuẩn hóa
   ---
-  duration_ms: 727.5132
+  duration_ms: 337.219
   ...
 # Subtest: nhảy: 7 m/s, g = 20 → đỉnh ≈ 1.225 m, chạm đất sau ≈ 0.7 s; không nhảy kép trên không
 ok 7 - nhảy: 7 m/s, g = 20 → đỉnh ≈ 1.225 m, chạm đất sau ≈ 0.7 s; không nhảy kép trên không
   ---
-  duration_ms: 150.9527
+  duration_ms: 81.9754
   ...
 # Subtest: lướt: 14 m/s × 12 tick = 2.8 m theo hướng mặt khi đứng yên; hồi chiêu 90 tick từ lúc bắt đầu
 ok 8 - lướt: 14 m/s × 12 tick = 2.8 m theo hướng mặt khi đứng yên; hồi chiêu 90 tick từ lúc bắt đầu
   ---
-  duration_ms: 181.3767
+  duration_ms: 89.668
   ...
 # Subtest: lướt: theo hướng đang di chuyển; trên không giữ nguyên độ cao
 ok 9 - lướt: theo hướng đang di chuyển; trên không giữ nguyên độ cao
   ---
-  duration_ms: 210.1616
+  duration_ms: 127.2163
   ...
 # Subtest: nhặt: XZ ≤ 1.0 và chênh cao ≤ 1.5; không cộng điểm khi nhặt
 ok 10 - nhặt: XZ ≤ 1.0 và chênh cao ≤ 1.5; không cộng điểm khi nhặt
   ---
-  duration_ms: 137.1096
+  duration_ms: 101.6011
   ...
 # Subtest: sức chứa 10
 ok 11 - sức chứa 10
   ---
-  duration_ms: 427.2198
+  duration_ms: 82.6654
   ...
 # Subtest: nạp đèn: 10 đom đóm, +10 mỗi đom đóm nạp, +100 khi thắp
 ok 12 - nạp đèn: 10 đom đóm, +10 mỗi đom đóm nạp, +100 khi thắp
   ---
-  duration_ms: 684.6732
+  duration_ms: 83.6361
   ...
 # Subtest: nạp đèn nhiều lần, đèn nhớ tiến độ
 ok 13 - nạp đèn nhiều lần, đèn nhớ tiến độ
   ---
-  duration_ms: 561.101
+  duration_ms: 81.4816
   ...
 # Subtest: nạp đèn: bán kính 2.0 m, chọn đèn gần nhất, bằng nhau thì id nhỏ hơn
 ok 14 - nạp đèn: bán kính 2.0 m, chọn đèn gần nhất, bằng nhau thì id nhỏ hơn
   ---
-  duration_ms: 1063.6082
+  duration_ms: 231.8851
   ...
 # Subtest: tỏa sáng: tốn 3, choáng 120 tick, đẩy 4 m trong 15 tick, +5 mỗi con
 ok 15 - tỏa sáng: tốn 3, choáng 120 tick, đẩy 4 m trong 15 tick, +5 mỗi con
   ---
-  duration_ms: 430.7219
+  duration_ms: 103.8546
   ...
 # Subtest: tỏa sáng: bán kính đo 3D từ chân + 0.8 m
 ok 16 - tỏa sáng: bán kính đo 3D từ chân + 0.8 m
   ---
-  duration_ms: 867.8908
+  duration_ms: 104.664
   ...
 # Subtest: tỏa sáng: pulse lại con đang choáng vẫn +5 và làm mới choáng
 ok 17 - tỏa sáng: pulse lại con đang choáng vẫn +5 và làm mới choáng
   ---
-  duration_ms: 1218.1937
+  duration_ms: 116.4083
   ...
 # Subtest: tỏa sáng: hồi chiêu 180 tick; thiếu đom đóm thì không kích hoạt
 ok 18 - tỏa sáng: hồi chiêu 180 tick; thiếu đom đóm thì không kích hoạt
   ---
-  duration_ms: 1526.0196
+  duration_ms: 242.5239
   ...
 # Subtest: Bóng Mực: đuổi trong 12 m với 4.0 m/s; ngoài 12 m thì wander
 ok 19 - Bóng Mực: đuổi trong 12 m với 4.0 m/s; ngoài 12 m thì wander
   ---
-  duration_ms: 408.8742
+  duration_ms: 143.7373
   ...
 # Subtest: Bóng Mực: bỏ đuổi khi xa hơn 18 m
 ok 20 - Bóng Mực: bỏ đuổi khi xa hơn 18 m
   ---
-  duration_ms: 365.7787
+  duration_ms: 122.9972
   ...
 # Subtest: Bóng Mực Đêm 3: 4.5 m/s
 ok 21 - Bóng Mực Đêm 3: 4.5 m/s
   ---
-  duration_ms: 274.3843
+  duration_ms: 80.8202
   ...
 # Subtest: bị đánh: −1 lửa, rơi floor(n/2) ra vành 1.5–2.5 m (TTL 480), bất tử 90, bóng recoil
 ok 22 - bị đánh: −1 lửa, rơi floor(n/2) ra vành 1.5–2.5 m (TTL 480), bất tử 90, bóng recoil
   ---
-  duration_ms: 315.4198
+  duration_ms: 90.5108
   ...
 # Subtest: đom đóm rơi hết hạn sau TTL
 ok 23 - đom đóm rơi hết hạn sau TTL
   ---
-  duration_ms: 214.5024
+  duration_ms: 75.6594
   ...
 # Subtest: vùng an toàn 6 m: Bóng Mực bị chặn ở mép
 ok 24 - vùng an toàn 6 m: Bóng Mực bị chặn ở mép
   ---
-  duration_ms: 194.5473
+  duration_ms: 97.9716
   ...
 # Subtest: vùng an toàn: đèn vừa thắp đẩy bóng bên trong ra mép trong 30 tick, không gây hit
 ok 25 - vùng an toàn: đèn vừa thắp đẩy bóng bên trong ra mép trong 30 tick, không gây hit
   ---
-  duration_ms: 213.7498
+  duration_ms: 94.6152
   ...
 # Subtest: rơi: −1 lửa, mất hết đom đóm, chờ 60 tick, hồi sinh ở điểm xuất phát với bất tử
 ok 26 - rơi: −1 lửa, mất hết đom đóm, chờ 60 tick, hồi sinh ở điểm xuất phát với bất tử
   ---
-  duration_ms: 185.9607
+  duration_ms: 93.5855
   ...
 # Subtest: rơi khi còn 1 lửa: thua ngay, không hồi sinh
 ok 27 - rơi khi còn 1 lửa: thua ngay, không hồi sinh
   ---
-  duration_ms: 161.966
+  duration_ms: 81.3348
   ...
 # Subtest: Đêm 2: đi qua cầu tre sang đảo B; bước ra ngoài cầu thì rơi
 ok 28 - Đêm 2: đi qua cầu tre sang đảo B; bước ra ngoài cầu thì rơi
   ---
-  duration_ms: 390.7503
+  duration_ms: 161.8391
   ...
 # Subtest: Đêm 2: bục nhảy bắn sang đảo kia (vy 14, ngang 24 m/s), đáp sau ≈ 1.4 s
 ok 29 - Đêm 2: bục nhảy bắn sang đảo kia (vy 14, ngang 24 m/s), đáp sau ≈ 1.4 s
   ---
-  duration_ms: 196.6995
+  duration_ms: 80.5892
   ...
 # Subtest: Đêm 3: vách tầng 1 chặn đi lên
 ok 30 - Đêm 3: vách tầng 1 chặn đi lên
   ---
-  duration_ms: 174.9762
+  duration_ms: 84.777
   ...
 # Subtest: Đêm 3: đi lên dốc 30° tới tầng 1 (Y = 3)
 ok 31 - Đêm 3: đi lên dốc 30° tới tầng 1 (Y = 3)
   ---
-  duration_ms: 159.8241
+  duration_ms: 72.2483
   ...
 # Subtest: Đêm 3: bục (0,3,13) đáp lên tầng 2; tháp chuông chặn
 ok 32 - Đêm 3: bục (0,3,13) đáp lên tầng 2; tháp chuông chặn
   ---
-  duration_ms: 416.4381
+  duration_ms: 161.9186
   ...
 # Subtest: Đêm 3: gió mạnh mỗi 30 s, kéo dài 5 s, đẩy 2 m/s
 ok 33 - Đêm 3: gió mạnh mỗi 30 s, kéo dài 5 s, đẩy 2 m/s
   ---
-  duration_ms: 249.1516
+  duration_ms: 126.0638
   ...
 # Subtest: Gió Lạc: chase khi mang ≥ 5 và cách ≤ 15 m; chạm cướp 3; flee 240 tick rồi removed
 ok 34 - Gió Lạc: chase khi mang ≥ 5 và cách ≤ 15 m; chạm cướp 3; flee 240 tick rồi removed
   ---
-  duration_ms: 202.2547
+  duration_ms: 101.4977
   ...
 # Subtest: Gió Lạc: mang < 5 thì idle
 ok 35 - Gió Lạc: mang < 5 thì idle
   ---
-  duration_ms: 249.3941
+  duration_ms: 75.6958
   ...
 # Subtest: Gió Lạc: pulse lúc chase → flee không cướp
 ok 36 - Gió Lạc: pulse lúc chase → flee không cướp
   ---
-  duration_ms: 229.0087
+  duration_ms: 79.8633
   ...
 # Subtest: Gió Lạc: pulse lúc flee có đồ → thả lại thành đom đóm rơi, biến mất sau 120 tick
 ok 37 - Gió Lạc: pulse lúc flee có đồ → thả lại thành đom đóm rơi, biến mất sau 120 tick
   ---
-  duration_ms: 248.3635
+  duration_ms: 90.9458
   ...
 # Subtest: Gió Lạc: sinh ở tick 1200 trên Đêm 2, id D1; không có ở Đêm 1
 ok 38 - Gió Lạc: sinh ở tick 1200 trên Đêm 2, id D1; không có ở Đêm 1
   ---
-  duration_ms: 548.7736
+  duration_ms: 287.1577
   ...
 # Subtest: Bùa Gió: nhặt → 600 tick, tốc độ 7.2, xuất hiện lại sau 2700 tick
 ok 39 - Bùa Gió: nhặt → 600 tick, tốc độ 7.2, xuất hiện lại sau 2700 tick
   ---
-  duration_ms: 369.2049
+  duration_ms: 250.1941
   ...
 # Subtest: Bùa Gió: lướt không hồi chiêu, nhấn khi đang lướt bị bỏ qua
 ok 40 - Bùa Gió: lướt không hồi chiêu, nhấn khi đang lướt bị bỏ qua
   ---
-  duration_ms: 196.4673
+  duration_ms: 81.6059
   ...
 # Subtest: tạm dừng: tick tăng, sim_tick/thời gian/di chuyển đứng yên, state paused
 ok 41 - tạm dừng: tick tăng, sim_tick/thời gian/di chuyển đứng yên, state paused
   ---
-  duration_ms: 153.1367
+  duration_ms: 98.609
   ...
 # Subtest: dựng scenario không cộng điểm và không phát sự kiện ngoài night_start
 ok 42 - dựng scenario không cộng điểm và không phát sự kiện ngoài night_start
   ---
-  duration_ms: 156.4221
+  duration_ms: 110.7452
   ...
 # Subtest: input/scenario sai định dạng → mã thoát 2
 ok 43 - input/scenario sai định dạng → mã thoát 2
   ---
-  duration_ms: 606.6963
+  duration_ms: 409.5827
   ...
 # Subtest: tất định Đêm 1: cùng seed + input → output giống hệt
 ok 44 - tất định Đêm 1: cùng seed + input → output giống hệt
   ---
-  duration_ms: 523.1435
+  duration_ms: 321.8012
   ...
 # Subtest: tất định Đêm 2: cùng seed + input → output giống hệt
 ok 45 - tất định Đêm 2: cùng seed + input → output giống hệt
   ---
-  duration_ms: 429.5568
+  duration_ms: 295.1467
   ...
 # Subtest: tất định Đêm 3: cùng seed + input → output giống hệt
 ok 46 - tất định Đêm 3: cùng seed + input → output giống hệt
   ---
-  duration_ms: 1079.6519
+  duration_ms: 650.7381
   ...
 # Subtest: hiệu năng: một Đêm 3 đầy đủ 21.600 tick ≤ 30 s
 ok 47 - hiệu năng: một Đêm 3 đầy đủ 21.600 tick ≤ 30 s
   ---
-  duration_ms: 815.8675
+  duration_ms: 546.8832
   ...
 # Subtest: worldMove theo công thức contract
 ok 48 - worldMove theo công thức contract
   ---
-  duration_ms: 5.9651
+  duration_ms: 2.4882
   ...
 # Subtest: rng tất định theo seed
 ok 49 - rng tất định theo seed
   ---
-  duration_ms: 2.5316
+  duration_ms: 1.7378
   ...
 # Subtest: input reader: trường vắng mặt giữ giá trị cũ
 ok 50 - input reader: trường vắng mặt giữ giá trị cũ
   ---
-  duration_ms: 0.3593
+  duration_ms: 1.0377
   ...
 # Subtest: validateInputs bắt tick không tăng
 ok 51 - validateInputs bắt tick không tăng
   ---
-  duration_ms: 0.4991
+  duration_ms: 0.8293
   ...
 # Subtest: tuning v1.2: khóa mới và thời lượng Đêm 240/270/300
 ok 52 - tuning v1.2: khóa mới và thời lượng Đêm 240/270/300
   ---
-  duration_ms: 1.1465
+  duration_ms: 1.8994
   ...
 # Subtest: dầu: đèn đặt lit không có fuel → 100, ever_lit; hao 1/giây
 ok 53 - dầu: đèn đặt lit không có fuel → 100, ever_lit; hao 1/giây
   ---
-  duration_ms: 233.7749
+  duration_ms: 153.2395
   ...
 # Subtest: dầu: hết dầu → lantern_out, tắt, deposited 0, vẫn nhớ ever_lit
 ok 54 - dầu: hết dầu → lantern_out, tắt, deposited 0, vẫn nhớ ever_lit
   ---
-  duration_ms: 189.0797
+  duration_ms: 112.5567
   ...
 # Subtest: châm dầu: used = min(mang, ceil((100 − fuel)/10)), +5 mỗi đom đóm, event refuel
 ok 55 - châm dầu: used = min(mang, ceil((100 − fuel)/10)), +5 mỗi đom đóm, event refuel
   ---
-  duration_ms: 179.3082
+  duration_ms: 116.4105
   ...
 # Subtest: châm dầu: không vượt 100; đèn gần đầy vẫn tốn 1 đom đóm
 ok 56 - châm dầu: không vượt 100; đèn gần đầy vẫn tốn 1 đom đóm
   ---
-  duration_ms: 228.5371
+  duration_ms: 153.077
   ...
 # Subtest: thắp lần đầu: 10 đom đóm, +100, relight false; thắp lại: 5 đom đóm, +40, relight true, relit_count
 ok 57 - thắp lần đầu: 10 đom đóm, +100, relight false; thắp lại: 5 đom đóm, +40, relight true, relit_count
   ---
-  duration_ms: 528.515
+  duration_ms: 215.2752
   ...
 # Subtest: sức chứa = 10 + 2 × successful_lights, tối đa 20; tăng khi thắp
 ok 58 - sức chứa = 10 + 2 × successful_lights, tối đa 20; tăng khi thắp
   ---
-  duration_ms: 910.9066
+  duration_ms: 481.5025
   ...
 # Subtest: drain: bóng wander cách đèn yếu ≤ 2 m thì drain, hút 5/s + hao 1/s, fuel_drain mỗi 60 tick, đèn tắt thì về wander
 ok 59 - drain: bóng wander cách đèn yếu ≤ 2 m thì drain, hút 5/s + hao 1/s, fuel_drain mỗi 60 tick, đèn tắt thì về wander
   ---
-  duration_ms: 144.6801
+  duration_ms: 104.2005
   ...
 # Subtest: drain: nhiều con cộng dồn
 ok 60 - drain: nhiều con cộng dồn
   ---
-  duration_ms: 332.5794
+  duration_ms: 88.3141
   ...
 # Subtest: drain: bóng wander ở xa đi tới đèn sáng có fuel < 30 gần nhất
 ok 61 - drain: bóng wander ở xa đi tới đèn sáng có fuel < 30 gần nhất
   ---
-  duration_ms: 406.9202
+  duration_ms: 83.0664
   ...
 # Subtest: drain → chase chỉ khi Mây vào trong 6 m (không phải 12 m)
 ok 62 - drain → chase chỉ khi Mây vào trong 6 m (không phải 12 m)
   ---
-  duration_ms: 834.0608
+  duration_ms: 87.1779
   ...
 # Subtest: châm dầu lên ≥ 30: bóng trong 6 m bị đẩy ra mép trong 30 tick, không gây hit
 ok 63 - châm dầu lên ≥ 30: bóng trong 6 m bị đẩy ra mép trong 30 tick, không gây hit
   ---
-  duration_ms: 408.1769
+  duration_ms: 81.3891
   ...
 # Subtest: tỏa sáng trúng bóng đang drain: +15 (con thường +5); hết choáng không còn drain
 ok 64 - tỏa sáng trúng bóng đang drain: +15 (con thường +5); hết choáng không còn drain
   ---
-  duration_ms: 294.7204
+  duration_ms: 76.6274
   ...
 # Subtest: vùng an toàn mất khi fuel < 30: bóng vào được và đánh trúng; fuel ≥ 30 thì bị chặn
 ok 65 - vùng an toàn mất khi fuel < 30: bóng vào được và đánh trúng; fuel ≥ 30 thì bị chặn
   ---
-  duration_ms: 859.7421
+  duration_ms: 196.6489
   ...
 # Subtest: không còn thắng sớm: thắp đủ đèn, Đêm vẫn tiếp tục
 ok 66 - không còn thắng sớm: thắp đủ đèn, Đêm vẫn tiếp tục
   ---
-  duration_ms: 952.345
+  duration_ms: 101.5956
   ...
 # Subtest: bình minh: ≥ ceil(0.6 × 5) = 3 đèn sáng → won/dawn_survived, điểm 50 + floor(fuel) mỗi đèn + 50 mỗi lửa
 ok 67 - bình minh: ≥ ceil(0.6 × 5) = 3 đèn sáng → won/dawn_survived, điểm 50 + floor(fuel) mỗi đèn + 50 mỗi lửa
   ---
-  duration_ms: 1925.4971
+  duration_ms: 241.6304
   ...
 # Subtest: bình minh: ngưỡng Đêm 2 = 4/6, Đêm 3 = 5/7
 ok 68 - bình minh: ngưỡng Đêm 2 = 4/6, Đêm 3 = 5/7
   ---
-  duration_ms: 1746.0925
+  duration_ms: 443.3615
   ...
 # Subtest: hết lửa ở đúng tick bình minh: luôn thua no_flames
 ok 69 - hết lửa ở đúng tick bình minh: luôn thua no_flames
   ---
-  duration_ms: 282.5499
+  duration_ms: 84.5248
   ...
 1..69
 # tests 69
@@ -353,4 +353,4 @@ ok 69 - hết lửa ở đúng tick bình minh: luôn thua no_flames
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 19284.6627
+# duration_ms 7603.3782

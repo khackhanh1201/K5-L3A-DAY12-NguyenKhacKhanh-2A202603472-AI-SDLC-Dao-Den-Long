@@ -38,3 +38,9 @@ Toàn bộ: 69/69 test đạt ([test-output.txt](test-output.txt)); tất địn
 | Các test điểm khác dùng `T.score.*` | Tự đúng theo tuning mới | |
 
 Ảnh được chụp trên `npm run dev` ở 1280×720. Trạng thái trong ảnh được dựng bằng console (đặt fuel, vị trí, thêm một Bóng Mực drain) để chụp nhanh.
+
+## Làm đẹp giao diện (chỉ src/render, không đổi headless)
+
+Bầu trời sao + trăng, biển mây trôi, sương, cỏ/đá/cây (cây cau ở Đêm 2), quầng sáng cho đèn/đom đóm/Bóng Mực, tone mapping ACES, HUD/menu kính mờ: [03](screenshots/03-visual-polish-n1.jpg), [04](screenshots/04-visual-polish-n3.jpg), [05](screenshots/05-menu-polish.jpg).
+
+Hiệu năng sau khi làm đẹp (Đêm 3, canvas 1600×900, Intel UHD): render + `readPixels` để ép GPU đồng bộ, trung bình 40 khung hình = **10.3 ms/khung (≈ 97 FPS)**; tắt phần trang trí còn 8.75 ms; 123 draw call, khoảng 40k tam giác. FPS theo rAF khi cửa sổ mất focus bị trình duyệt hãm (≈ 1–20 FPS ở cả hai trường hợp A/B), nên không dùng số đó làm bằng chứng.

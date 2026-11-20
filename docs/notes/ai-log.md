@@ -45,3 +45,4 @@ Công cụ: Claude Code (desktop app), model Claude Opus 5.5.
 | UI | Thanh dầu, nhấp nháy 1 Hz, HUD sức chứa và số đèn cần giữ, chế độ mù màu | Kiểm tra bằng ảnh 1280×720 |
 
 **Token / chi phí ước tính Phase 3:** _(điền từ trang usage)_ · Tiết kiệm: sửa bằng script thay chuỗi thay vì viết lại file, chỉ chạy lại test liên quan khi debug.
+| UI (làm đẹp) | Bầu trời, biển mây, sương, cây cỏ, quầng sáng, HUD kính mờ (`src/render/decor.js`) | Lỗi 1: quầng đèn gần như vô hình sau tone mapping ACES, phát hiện qua ảnh chụp và sửa bằng màu > 1.0. Lỗi 2: số đo FPS theo rAF tụt còn khoảng 20 vì cửa sổ mất focus. A/B bật/tắt trang trí cho kết quả như nhau, nên chuyển sang đo thời gian render có ép GPU đồng bộ (10.3 ms) |
