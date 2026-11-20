@@ -45,6 +45,23 @@
     label { display: flex; justify-content: space-between; gap: 14px; align-items: center; min-width: 300px; font-size: 18px; }
     input[type=range] { width: 160px; }
     .hint { font-size: 14px; opacity: .75; }
+
+    /* --- làm đẹp giao diện --- */
+    .screen { background: radial-gradient(ellipse at 50% 40%, rgba(255,179,71,.16), rgba(14,20,48,.55) 45%, rgba(6,8,22,.92) 100%); backdrop-filter: blur(3px); }
+    .screen h1 { font-size: 54px; letter-spacing: 1px; text-shadow: 0 0 18px rgba(255,179,71,.65), 0 0 42px rgba(242,193,78,.35); }
+    .screen h2 { text-shadow: 0 0 12px rgba(255,179,71,.5); }
+    #scr-menu h1::before { content: '🏮 '; } #scr-menu h1::after { content: ' 🏮'; }
+    button { box-shadow: 0 4px 14px rgba(255,179,71,.25); transition: transform .12s, box-shadow .12s, background .12s; font-weight: 600; }
+    button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255,179,71,.45); }
+    button.alt { box-shadow: none; background: rgba(14,20,48,.55); }
+    button.alt:hover { background: rgba(242,193,78,.15); }
+    #hud-timer { background: rgba(14,20,48,.6); border: 1px solid var(--line); border-radius: 999px; padding: 2px 18px; backdrop-filter: blur(4px); }
+    #hud-right, #hud-capbox { background: rgba(14,20,48,.6); border: 1px solid var(--line); border-radius: 12px; padding: 6px 12px; backdrop-filter: blur(4px); }
+    #hud-flames svg { filter: drop-shadow(0 0 6px rgba(255,179,71,.8)); }
+    #hud-flames .off svg { filter: none; opacity: .6; }
+    .cd { backdrop-filter: blur(4px); font-weight: 600; }
+    #hud-prompt { box-shadow: 0 0 16px rgba(255,179,71,.35); font-weight: 600; }
+    #hud-wind { background: rgba(14,20,48,.6); border-radius: 10px; padding: 4px 12px; }
     body.cb { --danger: #ffffff; }
     #hud-capbox { bottom: 46px; left: 50%; transform: translateX(-50%); font-size: 15px; }
   </style>

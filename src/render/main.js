@@ -28,6 +28,8 @@ $('set-cb').addEventListener('change', (e) => { settings.colorblind = e.target.c
 // ---------- Renderer ----------
 const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5)); // skill threejs-scene-setup: giới hạn pixel ratio
+renderer.toneMapping = THREE.ACESFilmicToneMapping; // skill threejs-materials-lighting: tone mapping cho ánh đèn ấm
+renderer.toneMappingExposure = 1.5;
 document.body.prepend(renderer.domElement);
 const world = createWorld(renderer);
 world.resize(window.innerWidth, window.innerHeight);
@@ -303,6 +305,8 @@ renderer.setAnimationLoop(() => {
 
 // hook chỉ-đọc cho kiểm thử trong trình duyệt
 window.__game = () => game;
+window.__world = world;
+window.__renderer = renderer;
 window.__fps = () => ({ samples: fpsLog.slice(-30), avg: fpsLog.slice(-30).reduce((a, b) => a + b, 0) / Math.max(1, fpsLog.slice(-30).length), size: [renderer.domElement.width, renderer.domElement.height] });
 window.__startNight = (n) => { showIntro(n); startNight(n); };
 showTop();

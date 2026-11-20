@@ -2,6 +2,7 @@
 import * as THREE from 'three';
 import { RULES, NIGHTS } from '../core/level.js';
 import { shadeState } from '../core/game.js';
+import { createSky, createCloudSea, createMist, decorateIsland, glowSprite } from './decor.js';
 
 // Bảng màu chuẩn Ticket-02
 export const PAL = {
@@ -19,17 +20,20 @@ const basic = (color, extra = {}) => new THREE.MeshBasicMaterial({ color, ...ext
 export function createWorld(renderer) {
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(PAL.sky);
-  scene.fog = new THREE.Fog(PAL.fog, 25, 110);
+  scene.fog = new THREE.Fog(PAL.fog, 30, 140);
+  createSky(scene, PAL);
+  const cloudSea = createCloudSea(scene);
+  const mist = createMist(scene);
   const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 400);
   const ambient = new THREE.AmbientLight(0xb8c4ff, 0.15);
-  const hemi = new THREE.HemisphereLight(0x5a6aa8, 0x1b2350, 0.35);
-  const moon = new THREE.DirectionalLight(0xaab8ff, 0.4);
+  const hemi = new THREE.HemisphereLight(0x6f80c8, 0x1b2350, 0.6);
+  const moon = new THREE.DirectionalLight(0xaab8ff, 0.7);
   moon.position.set(-30, 60, -20);
   scene.add(ambient, hemi, moon);
 
   const sea = new THREE.Mesh(new THREE.CircleGeometry(400, 48), mat(PAL.sea));
   sea.rotation.x = -Math.PI / 2;
-  sea.position.y = -12;
+  sea.position.y = -16;
   scene.add(sea);
 
   const level = new THREE.Group();
@@ -75,7 +79,10 @@ export function createWorld(renderer) {
     lamp.position.set(0, 1.18, 0.66);
     const light = new THREE.PointLight(PAL.lampOn, 5, 10, 1.5);
     light.position.copy(lamp.position);
-    may.add(body, scarf, head, hat, lamp, light);
+    const lampGlow = glowSprite(PAL.lampOn, 2.2, 0.9);
+    lampGlow.material.color.multiplyScalar(1.8);
+    lampGlow.position.copy(lamp.position);
+    may.add(body, scarf, head, hat, lamp, light, lampGlow);
   }
   scene.add(may);
 
@@ -181,6 +188,7 @@ export function createWorld(renderer) {
       level.add(tower, roof, bell);
     }
     map.pads.forEach(pad);
+    decorateIsland(level, map, PAL);
   }
 
   function makeLantern() {
@@ -188,7 +196,11 @@ export function createWorld(renderer) {
     const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.16, 3), mat(PAL.wood));
     pole.position.y = 1.5;
     const lampMat = new THREE.MeshLambertMaterial({ color: PAL.lampOff, emissive: 0x000000 });
-    const lamp = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.45, 0.9, 8), lampMat);
+    const lamp = new THREE.Mesh(new THREE.SphereGeometry(0.62, 16, 12), lampMat);
+    lamp.geometry.scale(1, 1.15, 1);
+    const halo = glowSprite(PAL.lampOn, 6, 0);
+    halo.material.color.multiplyScalar(2.2); // vượt 1.0 để còn sáng sau tone mapping
+    halo.position.y = 3.4;
     lamp.position.y = 3.4;
     const core = new THREE.Mesh(new THREE.SphereGeometry(0.25, 10, 8), basic(PAL.lampCore));
     core.position.y = 3.4;
@@ -211,8 +223,10 @@ export function createWorld(renderer) {
     barFill.position.z = 0.01;
     bar.add(barBg, barFill);
     bar.position.y = 4.6;
-    g.add(pole, lamp, core, cap, light, ring, tear, bar);
-    return { group: g, lamp, lampMat, core, light, ring, tear, bar, barFill, fill: 0, flash: 0 };
+    const arm = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.1, 0.1), mat(PAL.wood));
+    arm.position.y = 4.2;
+    g.add(pole, lamp, core, cap, light, ring, tear, bar, halo, arm);
+    return { group: g, halo, lamp, lampMat, core, light, ring, tear, bar, barFill, fill: 0, flash: 0 };
   }
 
   function makeShade() {
@@ -225,7 +239,9 @@ export function createWorld(renderer) {
       e.position.set(x, 0.15, 0.62);
       g.add(e);
     }
-    g.userData = { rim, body };
+    const aura = glowSprite(0x5a2aa8, 3.2, 0.35);
+    g.add(aura);
+    g.userData = { rim, body, aura };
     return g;
   }
 
@@ -274,7 +290,7 @@ export function createWorld(renderer) {
 
     syncPool(pools.motes, g.motes, (m) => {
       const grp = new THREE.Group();
-      grp.add(new THREE.Mesh(geo.mote, m.kind === 'dropped' ? mats.drop : mats.mote), new THREE.Mesh(geo.halo, mats.halo));
+      grp.add(new THREE.Mesh(geo.mote, m.kind === 'dropped' ? mats.drop : mats.mote), glowSprite(PAL.moteHalo, 1.3, 0.85));
       return grp;
     }, (obj, m) => {
       const ph = parseInt(m.id.slice(1), 10);
@@ -297,6 +313,7 @@ export function createWorld(renderer) {
       const stun = st === 'stunned';
       obj.userData.body.material = stun ? mats.stun : mats.shade;
       obj.userData.rim.material = stun ? mats.stunRim : mats.rim;
+      obj.userData.aura.material.opacity = stun ? 0.1 : 0.3 + 0.1 * Math.sin(t * 4);
     });
 
     syncPool(pools.drifters, g.drifters.filter((d) => d.state !== 'removed'), makeDrifter, (m, d) => {
@@ -331,17 +348,21 @@ export function createWorld(renderer) {
       v.bar.quaternion.copy(camera.quaternion);
       v.flash = Math.max(0, v.flash - 0.02);
       v.lampMat.color.set(l.lit ? PAL.lampOn : PAL.lampOff);
-      v.lampMat.emissive.setRGB(1.0 * v.fill, 0.7 * v.fill, 0.28 * v.fill);
+      v.lampMat.emissive.setRGB(1.0 * v.fill, 0.5 * v.fill, 0.12 * v.fill);
       v.core.visible = l.lit;
       v.light.intensity = 45 * v.fill + 80 * v.flash;
+      v.halo.material.opacity = Math.min(1, 0.85 * v.fill + v.flash);
+      v.halo.scale.setScalar(7 + 4 * v.flash);
       v.ring.material.opacity = l.lit ? 0.35 : 0;
       if (l.lit) lit++;
     });
 
     // ánh sáng môi trường = 0.15 + 0.55 × tiến độ (Ticket-02)
     const k = lit / g.lanterns.length;
+    cloudSea.update(t);
+    mist.update(t, p.pos, k);
     ambient.intensity = 0.15 + 0.55 * k;
-    hemi.intensity = 0.35 + 0.3 * k;
+    hemi.intensity = 0.6 + 0.35 * k;
     scene.fog.far = 110 + 60 * k;
 
     if (fx.pulse > 0) {
@@ -368,7 +389,7 @@ export function createWorld(renderer) {
   }
 
   return {
-    scene, camera, buildLevel, sync,
+    scene, camera, buildLevel, sync, pools,
     pulse: () => (fx.pulse = 1),
     setColorblind: (on) => {
       const c = on ? PAL.shadeRimCB : PAL.shadeRim;
