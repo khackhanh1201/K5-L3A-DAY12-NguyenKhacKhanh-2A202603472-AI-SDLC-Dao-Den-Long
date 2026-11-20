@@ -1,0 +1,5 @@
+# commit 1ec5f19 · node v20.14.0 · win32 x64 · 12th Gen Intel(R) Core(TM) i7-12700H · 2026-11-20T09:07:07.629Z
+Yêu cầu: một Đêm đầy đủ (21.600 tick) ≤ 30 s
+Đêm 1: 563 ms · {"type":"end","ticks":18000,"state":"lost","score":0}
+Đêm 2: 988 ms · {"type":"end","ticks":16101,"state":"lost","score":0}
+Đêm 3: 1122 ms · {"type":"end","ticks":17032,"state":"lost","score":0}

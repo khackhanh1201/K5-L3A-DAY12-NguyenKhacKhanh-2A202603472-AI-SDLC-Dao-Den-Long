@@ -1,0 +1,7 @@
+# FPS bản có giao diện (npm run dev, Chromium 156 trong Claude desktop, Windows 11)
+# Viewport 1280x720, devicePixelRatio 1.25 → canvas 1600x900 (nhiều pixel hơn yêu cầu)
+# GPU: ANGLE (Intel UHD Graphics 0x4626, D3D11) · đo bằng window.__fps(): 30 mẫu, mỗi mẫu 1 giây
+Đêm 1 (6 Bóng Mực, 24 đom đóm): trung bình 137.3 FPS, thấp nhất 110.1
+Đêm 3 (6 Bóng Mực, gió + lá bay đang hoạt động ở sim 1800): trung bình 120.0 FPS, thấp nhất 84.6
+Yêu cầu: ≥ 30 FPS trung bình ở 1280x720 → Đạt
+Ghi chú: Mây đứng yên (flames đặt 99 qua console để không thua giữa chừng); máy chấm chung có thể cho số khác.

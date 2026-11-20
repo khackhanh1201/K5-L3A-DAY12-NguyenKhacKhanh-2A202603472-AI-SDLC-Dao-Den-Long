@@ -1,0 +1,5 @@
+# commit 1ec5f19 · node v20.14.0 · win32 x64 · 12th Gen Intel(R) Core(TM) i7-12700H · 2026-11-20T09:07:07.629Z
+lệnh: node src/headless.js --seed 42 --night N --inputs out/verify/inputs.json --ticks 3000 --out <f>
+Đêm 1: 10d6f56082b3ebe54fa4dfd679d169981f49c9feaf7ccbafbbb9d4444d564be1 / 10d6f56082b3ebe54fa4dfd679d169981f49c9feaf7ccbafbbb9d4444d564be1 → GIỐNG HỆT
+Đêm 2: a469dfeb41438aaa346ee70c3700d402f7e37d5ea12ed91249de0fec30e8090a / a469dfeb41438aaa346ee70c3700d402f7e37d5ea12ed91249de0fec30e8090a → GIỐNG HỆT
+Đêm 3: 35b549f4de62b42a7b956be5f0b2e7e2936596f311b76f57dc3c7337b9cd8a12 / 35b549f4de62b42a7b956be5f0b2e7e2936596f311b76f57dc3c7337b9cd8a12 → GIỐNG HỆT
