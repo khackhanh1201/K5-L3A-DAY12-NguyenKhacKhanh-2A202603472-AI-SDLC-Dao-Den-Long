@@ -9,7 +9,7 @@ export const PAL = {
   grass: 0x2f5d50, sand: 0xc9b48a, wood: 0x6b4a2f, sea: 0x12384a,
   lampOn: 0xffb347, lampCore: 0xffe9b0, lampOff: 0x5b5f6e,
   moteCore: 0xfff6c2, moteHalo: 0xffe58a,
-  shadeBody: 0x120a1a, shadeRim: 0x7a3cff, shadeStun: 0x3a3450,
+  shadeBody: 0x120a1a, shadeRim: 0x7a3cff, shadeRimCB: 0x00b3ff, shadeStun: 0x3a3450,
   shirt: 0xe8e2d0, scarf: 0xc8102e, gold: 0xf2c14e, drifter: 0x8fa3b8,
 };
 
@@ -200,8 +200,19 @@ export function createWorld(renderer) {
     const ring = new THREE.Mesh(new THREE.RingGeometry(5.85, 6, 64), basic(PAL.lampOn, { transparent: true, opacity: 0 }));
     ring.rotation.x = -Math.PI / 2;
     ring.position.y = 0.04;
-    g.add(pole, lamp, core, cap, light, ring);
-    return { group: g, lampMat, core, light, ring, fill: 0, flash: 0 };
+    // vết rách trên giấy đèn tắt (phân biệt không cần màu, Ticket-03)
+    const tear = new THREE.Mesh(new THREE.PlaneGeometry(0.28, 0.42), basic(0x111111, { side: THREE.DoubleSide }));
+    tear.position.set(0.2, 3.35, 0.5);
+    tear.rotation.z = 0.5;
+    // thanh dầu (billboard)
+    const bar = new THREE.Group();
+    const barBg = new THREE.Mesh(new THREE.PlaneGeometry(1.6, 0.18), basic(0x000000, { transparent: true, opacity: 0.6, depthWrite: false }));
+    const barFill = new THREE.Mesh(new THREE.PlaneGeometry(1.5, 0.12), basic(PAL.lampOn, { depthWrite: false }));
+    barFill.position.z = 0.01;
+    bar.add(barBg, barFill);
+    bar.position.y = 4.6;
+    g.add(pole, lamp, core, cap, light, ring, tear, bar);
+    return { group: g, lamp, lampMat, core, light, ring, tear, bar, barFill, fill: 0, flash: 0 };
   }
 
   function makeShade() {
@@ -305,8 +316,19 @@ export function createWorld(renderer) {
     let lit = 0;
     syncPool(pools.lanterns, g.lanterns, makeLantern, (v, l) => {
       v.group.position.set(l.pos[0], l.pos[1], l.pos[2]);
-      const target = l.lit ? 1 : (l.deposited / g.T.lantern_cost) * 0.3;
-      v.fill += (target - v.fill) * 0.06;
+      const fuel = l.fuelU / 60;
+      const low = l.lit && fuel < g.T.low_fuel_threshold;
+      const blinkOff = low && Math.floor(t * 2) % 2 === 1; // nhấp nháy chậm 1 Hz khi fuel < 30
+      const cost = l.everLit ? g.T.relight_cost : g.T.lantern_cost;
+      const target = l.lit ? (blinkOff ? 0.25 : 1) : (l.deposited / cost) * 0.3;
+      v.fill += (target - v.fill) * (low ? 0.5 : 0.06);
+      v.lamp.scale.y = l.lit ? 1 : 0.8; // đèn tắt xẹp 20%
+      v.tear.visible = !l.lit;
+      v.bar.visible = l.lit && !blinkOff;
+      v.barFill.scale.x = Math.max(0.001, fuel / g.T.fuel_max);
+      v.barFill.position.x = -0.75 * (1 - fuel / g.T.fuel_max);
+      v.barFill.material.color.set(low ? 0xff5a5f : PAL.lampOn);
+      v.bar.quaternion.copy(camera.quaternion);
       v.flash = Math.max(0, v.flash - 0.02);
       v.lampMat.color.set(l.lit ? PAL.lampOn : PAL.lampOff);
       v.lampMat.emissive.setRGB(1.0 * v.fill, 0.7 * v.fill, 0.28 * v.fill);
@@ -348,6 +370,11 @@ export function createWorld(renderer) {
   return {
     scene, camera, buildLevel, sync,
     pulse: () => (fx.pulse = 1),
+    setColorblind: (on) => {
+      const c = on ? PAL.shadeRimCB : PAL.shadeRim;
+      mats.rim.color.set(c);
+      mats.eye.color.set(on ? PAL.shadeRimCB : 0xd9c2ff);
+    },
     flashLantern: (id) => { const v = pools.lanterns.get(id); if (v) v.flash = 1; },
     resize: (w, h) => { camera.aspect = w / h; camera.updateProjectionMatrix(); renderer.setSize(w, h); },
   };

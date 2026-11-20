@@ -2,7 +2,7 @@
 // Mọi luật chơi nằm ở src/core; ở đây chỉ gửi input vào core.step() và vẽ lại state.
 import * as THREE from 'three';
 import contract from '../../game.contract.json';
-import { createGame, step, timeLeft } from '../core/game.js';
+import { createGame, step, timeLeft, capacity, litNeeded } from '../core/game.js';
 import { NIGHTS, RULES, TICK_RATE } from '../core/level.js';
 import { createWorld } from './world.js';
 import { SFX, setVolume, resume as resumeAudio, startMusic, stopMusic } from './audio.js';
@@ -13,7 +13,7 @@ const $ = (id) => document.getElementById(id);
 
 // ---------- Cài đặt (localStorage, có try/catch) ----------
 const SETTINGS_KEY = 'ddl-settings-v1';
-const settings = { volume: 0.7, sensitivity: 0.6 };
+const settings = { volume: 0.7, sensitivity: 0.6, colorblind: false };
 try { Object.assign(settings, JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}')); } catch {}
 const saveSettings = () => { try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings)); } catch {} };
 setVolume(settings.volume);
@@ -21,6 +21,9 @@ $('set-volume').value = settings.volume;
 $('set-sens').value = settings.sensitivity;
 $('set-volume').addEventListener('input', (e) => { settings.volume = +e.target.value; setVolume(settings.volume); saveSettings(); });
 $('set-sens').addEventListener('input', (e) => { settings.sensitivity = +e.target.value; saveSettings(); });
+$('set-cb').checked = !!settings.colorblind;
+const applyColorblind = () => { document.body.classList.toggle('cb', !!settings.colorblind); world?.setColorblind(!!settings.colorblind); };
+$('set-cb').addEventListener('change', (e) => { settings.colorblind = e.target.checked; saveSettings(); applyColorblind(); });
 
 // ---------- Renderer ----------
 const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
@@ -29,6 +32,7 @@ document.body.prepend(renderer.domElement);
 const world = createWorld(renderer);
 world.resize(window.innerWidth, window.innerHeight);
 addEventListener('resize', () => world.resize(window.innerWidth, window.innerHeight));
+applyColorblind();
 
 // ---------- Màn hình dạng stack (skill game-ui-ux) ----------
 const stack = ['scr-menu'];
@@ -80,8 +84,8 @@ function showIntro(n) {
 }
 
 const REASONS = {
-  all_lit: 'Tất cả Đèn Lồng Lớn đã sáng!',
-  dawn: 'Trời đã sáng mà đảo vẫn chưa sáng hết đèn.',
+  dawn_survived: 'Bình minh tới, đảo vẫn đủ sáng!',
+  dawn: 'Trời đã sáng mà đảo không giữ đủ đèn sáng.',
   no_flames: 'Ngọn lửa của Mây đã tắt.',
 };
 
@@ -162,7 +166,7 @@ function readInput() {
 
 // ---------- HUD ----------
 const FLAME = '<svg viewBox="0 0 24 30"><path fill="#ffb347" d="M12 1C14 7 21 10 21 19a9 9 0 0 1-18 0c0-5 3-7 4-11 1 3 2 4 3 4 0-4 0-7 2-11z"/></svg>';
-$('hud-motes').innerHTML = '<i></i>'.repeat(T.carry_capacity);
+$('hud-motes').innerHTML = '<i></i>'.repeat(T.capacity_max);
 let lastCountdown = null;
 
 function updateHud(g, lit) {
@@ -175,13 +179,16 @@ function updateHud(g, lit) {
   const timer = $('hud-timer');
   timer.textContent = `${Math.floor(tl / 60)}:${String(Math.floor(tl % 60)).padStart(2, '0')}`;
   timer.classList.toggle('danger', tl <= 30);
+  if (tl <= 30 && settings.colorblind) timer.textContent = `⚠ ${timer.textContent}`;
   if (tl <= 10 && tl > 0) {
     const s = Math.ceil(tl);
     if (s !== lastCountdown) { lastCountdown = s; SFX.countdown(); }
   }
-  $('hud-lit').textContent = `${lit}/${g.lanterns.length}`;
+  $('hud-lit').textContent = `${lit}/${g.lanterns.length} (cần ${litNeeded(g)})`;
+  const cap = capacity(g);
+  $('hud-cap').textContent = `${p.carried}/${cap}`;
   $('hud-score').textContent = g.score;
-  [...$('hud-motes').children].forEach((c, i) => c.classList.toggle('on', i < p.carried));
+  [...$('hud-motes').children].forEach((c, i) => { c.classList.toggle('on', i < p.carried); c.style.display = i < cap ? '' : 'none'; });
 
   const dashMax = Math.round(T.dash_cooldown_s * TICK_RATE);
   const cdDash = $('cd-dash');
@@ -207,14 +214,15 @@ function updateHud(g, lit) {
   // Nhắc nạp đèn khi đứng gần đèn chưa sáng
   let near = null, nearD = Infinity, target = null, targetD = Infinity;
   for (const l of g.lanterns) {
-    if (l.lit) continue;
     const d = Math.hypot(l.pos[0] - p.pos[0], l.pos[2] - p.pos[2]);
-    if (d <= T.interact_radius && d < nearD) [near, nearD] = [l, d];
-    if (d < targetD) [target, targetD] = [l, d];
+    if (d <= T.interact_radius && d < nearD && (!l.lit || l.fuelU < T.fuel_max * 60)) [near, nearD] = [l, d];
+    if (!l.lit && d < targetD) [target, targetD] = [l, d];
   }
   const prompt = $('hud-prompt');
   prompt.style.display = near ? 'block' : 'none';
-  if (near) prompt.textContent = `E — Nạp ánh sáng (${near.deposited}/${T.lantern_cost})`;
+  if (near) prompt.textContent = near.lit
+    ? `E — Châm dầu (${Math.round(near.fuelU / 60)}/${T.fuel_max})`
+    : `E — Nạp ánh sáng (${near.deposited}/${near.everLit ? T.relight_cost : T.lantern_cost})`;
 
   // Mũi tên tới đèn chưa sáng gần nhất khi nó ở ngoài màn hình
   const arrow = $('hud-arrow');
@@ -244,6 +252,8 @@ function handleEvents(events) {
     switch (e.name) {
       case 'mote_picked': SFX.pickup(); break;
       case 'deposit': SFX.deposit(); break;
+      case 'lantern_out': SFX.hit(); break;
+      case 'refuel': SFX.deposit(); break;
       case 'lantern_lit': SFX.lanternLit(); world.flashLantern(e.data.lantern_id); break;
       case 'pulse': SFX.pulse(); world.pulse(); break;
       case 'player_hit': SFX.hit(); break;
