@@ -1,0 +1,5 @@
+# commit e87c616 · node v20.14.0 · win32 x64 · 12th Gen Intel(R) Core(TM) i7-12700H · 2026-11-20T15:14:13.961Z
+Yêu cầu: một Đêm đầy đủ (21.600 tick) ≤ 30 s
+Đêm 1: 1069 ms · {"type":"end","ticks":14400,"state":"lost","score":0}
+Đêm 2: 1600 ms · {"type":"end","ticks":16200,"state":"lost","score":0}
+Đêm 3: 1769 ms · {"type":"end","ticks":18000,"state":"lost","score":0}
