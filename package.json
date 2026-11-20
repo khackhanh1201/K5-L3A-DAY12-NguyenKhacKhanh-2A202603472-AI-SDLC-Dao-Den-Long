@@ -1,16 +1,18 @@
 {
   "name": "dao-den-long",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
   "description": "Đảo Đèn Lồng — game 3D (Three.js) với chế độ headless theo Test Contract v1.0",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "start": "vite preview --port 4173 --open",
+    "start": "node scripts/run.mjs",
     "headless": "node src/headless.js",
     "test": "node --test tests/",
-    "verify": "node scripts/verify.mjs"
+    "verify": "node scripts/verify.mjs",
+    "bench": "node scripts/bench.mjs",
+    "soak": "node --expose-gc scripts/soak.mjs"
   },
   "engines": {
     "node": ">=20"
@@ -19,6 +21,7 @@
     "three": "0.169.0"
   },
   "devDependencies": {
+    "playwright-core": "1.48.2",
     "vite": "5.4.10"
   }
 }
