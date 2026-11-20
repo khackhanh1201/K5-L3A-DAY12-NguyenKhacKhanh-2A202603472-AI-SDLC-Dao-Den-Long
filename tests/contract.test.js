@@ -24,16 +24,17 @@ test('format v1.1: snapshot tick 0, night_start, trường mới, dòng cuối e
   assert.deepEqual(r.end, { type: 'end', ticks: 60, state: 'playing', score: 0 });
 });
 
-test('tuning khớp số chuẩn Ticket-02', () => {
+// Phase 3: thời lượng Đêm và khóa score đổi theo Ticket-03 (thay thế số của Ticket-02)
+test('tuning khớp số chuẩn (Ticket-02, cập nhật Ticket-03)', () => {
   const want = {
     player_speed: 6, carry_capacity: 10, lantern_cost: 10, pickup_radius: 1, interact_radius: 2,
     pulse_cost: 3, pulse_radius: 5, pulse_cooldown_s: 3, pulse_push_m: 4, safe_radius: 6, shade_speed: 4,
     shade_hit_radius: 1, flames: 3, invuln_s: 1.5, hit_drop_ratio: 0.5, fall_enabled: true,
     dash_speed: 14, dash_duration_s: 0.2, dash_cooldown_s: 1.5,
-    night1_duration_s: 300, night2_duration_s: 330, night3_duration_s: 360,
+    night1_duration_s: 240, night2_duration_s: 270, night3_duration_s: 300,
   };
   for (const [k, v] of Object.entries(want)) assert.equal(T[k], v, k);
-  assert.deepEqual(T.score, { per_mote: 10, per_lantern: 100, per_stun: 5, per_second_left: 2, per_flame_left: 50 });
+  assert.deepEqual(T.score, { per_mote: 5, per_lantern: 100, per_relight: 40, per_stun: 5, per_stun_drain: 15, per_lantern_at_dawn: 50, per_second_left: 0, per_flame_left: 50 });
 });
 
 // ---------- Bản đồ chuẩn ----------
@@ -50,7 +51,7 @@ test('Đêm 1 mặc định: đèn chuẩn, 20 đom đóm tại 20 điểm khác
     assert.equal(m.kind, 'random');
     assert.equal(m.ttl_s, null);
   }
-  assert.equal(s.time_left_s, 300);
+  assert.equal(s.time_left_s, 240); // Ticket-03: 300 → 240
   assert.equal(s.player.flames, 3);
 });
 
@@ -58,12 +59,12 @@ test('Đêm 2 và 3 mặc định: đèn, bùa, thời gian, điểm xuất phá
   const n2 = runHeadless('n2-default', { night: 2, ticks: 0 }).snapAt(0);
   assert.deepEqual(n2.lanterns.map((l) => l.pos), [[0, 0, 20], [17, 0, -10], [-17, 0, -10], [70, 0, 20], [87, 0, -10], [53, 0, -10]]);
   assert.deepEqual(n2.charms, [{ id: 'C1', pos: [35, 0, 0], available: true, respawn_s: 0 }]);
-  assert.equal(n2.time_left_s, 330);
+  assert.equal(n2.time_left_s, 270); // Ticket-03: 330 → 270
   assert.equal(n2.night, 2);
   const n3 = runHeadless('n3-default', { night: 3, ticks: 0 }).snapAt(0);
   assert.deepEqual(n3.lanterns.map((l) => l.pos), [[0, 6, 6], [18, 3, 10], [-18, 3, 10], [35, 0, -10], [-35, 0, -10], [20, 0, -35], [-20, 0, -35]]);
   assert.deepEqual(n3.charms.map((c) => c.pos), [[30, 0, 25], [-30, 0, 25]]);
-  assert.equal(n3.time_left_s, 360);
+  assert.equal(n3.time_left_s, 300); // Ticket-03: 360 → 300
   assert.deepEqual(n3.player.pos, [0, 0, -30]);
   for (const m of n3.motes) assert.ok([0, 3, 6].includes(m.pos[1]));
 });
@@ -491,25 +492,8 @@ test('tạm dừng: tick tăng, sim_tick/thời gian/di chuyển đứng yên, s
 });
 
 // ---------- Thắng / thua ----------
-test('thắng: điểm = nạp ×10 + 100 + floor(giây còn lại)×2 + 50×lửa', () => {
-  const r = runHeadless('win', {
-    scenario: clean({
-      player: { carried: 1 },
-      lanterns: [{ id: 'L1', lit: true }, { id: 'L2', lit: true }, { id: 'L3', lit: true }, { id: 'L4', lit: true }, { id: 'L5', pos: [0, 0, 1.5], deposited: 9 }],
-    }),
-    inputs: hold([{ tick: 0, interact: true }]), ticks: 10,
-  });
-  const expected = 10 + 100 + Math.floor(300 - 1 / 60) * 2 + 3 * 50;
-  assert.deepEqual(r.end, { type: 'end', ticks: 1, state: 'won', score: expected });
-});
-
-test('thắng đúng tick hết giờ vẫn là thắng; hết giờ mà chưa xong thì dawn', () => {
-  const lit4 = [{ id: 'L1', lit: true }, { id: 'L2', lit: true }, { id: 'L3', lit: true }, { id: 'L4', lit: true }, { id: 'L5', pos: [0, 0, 1.5], deposited: 9 }];
-  const w = runHeadless('win-at-dawn', { scenario: clean({ time_left_s: 1 / 60, player: { carried: 1 }, lanterns: lit4 }), inputs: hold([{ tick: 0, interact: true }]), ticks: 5 });
-  assert.equal(w.ev('game_over')[0].data.reason, 'all_lit');
-  const d = runHeadless('lose-dawn', { scenario: clean({ time_left_s: 1 }), ticks: 200 });
-  assert.deepEqual(d.ev('game_over').map((e) => [e.tick, e.data.reason]), [[60, 'dawn']]);
-});
+// Phase 3: hai test "thắng khi thắp hết đèn" (điểm thưởng giây, thắng đúng tick hết giờ) đã XÓA vì Ticket-03
+// thay luật thắng; test thay thế nằm ở tests/phase3.test.js (thắng/thua lúc bình minh). Test 'lose-dawn' chuyển sang đó.
 
 test('dựng scenario không cộng điểm và không phát sự kiện ngoài night_start', () => {
   const r = runHeadless('scenario-no-score', { scenario: clean({ lanterns: [{ id: 'L1', lit: true }] }), ticks: 1 });

@@ -76,7 +76,7 @@ export function validateScenario(s) {
   if ('random_drifters' in s && typeof s.random_drifters !== 'boolean') throw new FormatError('scenario: random_drifters phải là boolean');
   if ('wind_enabled' in s && typeof s.wind_enabled !== 'boolean') throw new FormatError('scenario: wind_enabled phải là boolean');
   if (s.player) {
-    for (const k of ['invuln_ticks', 'dash_cd_ticks', 'pulse_cd_ticks', 'charm_ticks']) {
+    for (const k of ['invuln_ticks', 'dash_cd_ticks', 'pulse_cd_ticks', 'charm_ticks', 'successful_lights']) {
       if (k in s.player && !(Number.isInteger(s.player[k]) && s.player[k] >= 0)) throw new FormatError(`scenario: player.${k} phải là số nguyên ≥ 0`);
     }
   }
@@ -85,7 +85,8 @@ export function validateScenario(s) {
     s.shades.forEach((sh, i) => {
       if (!sh || typeof sh !== 'object' || !isVec3(sh.pos)) throw new FormatError(`scenario: shades[${i}].pos không hợp lệ`);
       if ('id' in sh && typeof sh.id !== 'string') throw new FormatError(`scenario: shades[${i}].id phải là chuỗi`);
-      if ('state' in sh && !['spawning', 'wander', 'chase', 'recoil', 'stunned'].includes(sh.state)) throw new FormatError(`scenario: shades[${i}].state không hợp lệ`);
+      if ('state' in sh && !['spawning', 'wander', 'chase', 'recoil', 'stunned', 'drain'].includes(sh.state)) throw new FormatError(`scenario: shades[${i}].state không hợp lệ`);
+      if ('target_lantern_id' in sh && typeof sh.target_lantern_id !== 'string') throw new FormatError(`scenario: shades[${i}].target_lantern_id phải là chuỗi`);
       if ('state_ticks_left' in sh && !(Number.isInteger(sh.state_ticks_left) && sh.state_ticks_left >= 0)) throw new FormatError(`scenario: shades[${i}].state_ticks_left không hợp lệ`);
     });
   }
@@ -96,6 +97,8 @@ export function validateScenario(s) {
       if ('pos' in l && !isVec3(l.pos)) throw new FormatError(`scenario: lanterns[${i}].pos không hợp lệ`);
       if ('deposited' in l && !(Number.isInteger(l.deposited) && l.deposited >= 0)) throw new FormatError(`scenario: lanterns[${i}].deposited không hợp lệ`);
       if ('lit' in l && typeof l.lit !== 'boolean') throw new FormatError(`scenario: lanterns[${i}].lit phải là boolean`);
+      if ('ever_lit' in l && typeof l.ever_lit !== 'boolean') throw new FormatError(`scenario: lanterns[${i}].ever_lit phải là boolean`);
+      if ('fuel' in l && !(isNum(l.fuel) && l.fuel >= 0 && l.fuel <= 100)) throw new FormatError(`scenario: lanterns[${i}].fuel phải trong [0,100]`);
     });
   }
   if ('time_left_s' in s && !(isNum(s.time_left_s) && s.time_left_s >= 0)) throw new FormatError('scenario: time_left_s không hợp lệ');

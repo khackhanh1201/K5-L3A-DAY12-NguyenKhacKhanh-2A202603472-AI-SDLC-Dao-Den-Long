@@ -29,6 +29,7 @@ export const RULES = {
   shadeSpawnMinDist: 15,
   shadeFirstSpawnTick: 300,
   evictTicks: 30,
+  drainRange: 2, // Ticket-03: cách đèn ≤ 2 m thì drain
   dropTtlTicks: 480,
   dropRingMin: 1.5,
   dropRingMax: 2.5,
