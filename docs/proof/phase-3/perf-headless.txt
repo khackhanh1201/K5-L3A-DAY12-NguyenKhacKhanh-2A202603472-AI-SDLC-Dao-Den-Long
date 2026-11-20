@@ -1,0 +1,5 @@
+# commit af611db · node v20.14.0 · win32 x64 · 12th Gen Intel(R) Core(TM) i7-12700H · 2026-11-20T09:18:53.900Z
+Yêu cầu: một Đêm đầy đủ (21.600 tick) ≤ 30 s
+Đêm 1: 735 ms · {"type":"end","ticks":14400,"state":"lost","score":0}
+Đêm 2: 1072 ms · {"type":"end","ticks":16200,"state":"lost","score":0}
+Đêm 3: 911 ms · {"type":"end","ticks":18000,"state":"lost","score":0}
